@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="ignored_packages">
+        <item>com.android.systemui</item>
+        <item>com.android.settings</item>
+        <item>com.android.incallui</item>
+        <item>android</item>
+        <item>com.qihoo360.mobilesafe</item>
+    </array>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Notification Reminder</string>
+    <string name="start_service">Enable Float</string>
+    <string name="stop_service">Disenable Float</string>
+    <string name="enable_listener">Activate Notification Listener</string>
+
+    <string name="label_permmit_float">Allow float view</string>
+
+    <string name="label">Notification Listener</string>
+
+    <string name="instruction">\'Notification Reminder\' will show APP notifications in a float window.\nFuctions：\n（1）single click: open notification\n（2）fling up and down: switch app\n（3）fling to left：clear current notifications\n(4)fling to right: clear all notifications</string>
+</resources>
