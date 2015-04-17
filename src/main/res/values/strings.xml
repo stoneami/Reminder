@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Notification Reminder</string>
     <string name="start_service">Enable Float</string>
     <string name="stop_service">Disenable Float</string>
@@ -15,4 +14,8 @@
     <string name="label_auto_open_msg_summary">自动打开通知应用</string>
 
     <string name="instruction">\'Notification Reminder\' will show APP notifications in a float window.\nFuctions：\n（1）single click: open notification\n（2）fling up and down: switch app\n（3）fling to left：clear current notifications\n(4)fling to right: clear all notifications</string>
+
+    <string name="key_active_listener">key_active_listener</string>
+    <string name="key_float_view">key_float_view</string>
+    <string name="key_auto_open_msg">key_auto_open_msg</string>
 </resources>

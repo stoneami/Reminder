@@ -84,6 +84,7 @@ public class NotificationReceiver extends Service {
 
         IntentFilter myFilter = new IntentFilter(
                 NotificationListener.MSG_NOTIFICATION_CHANGED);
+        myFilter.addAction(NotificationListener.MSG_AUTO_OPEN_MSG);
         registerReceiver(mNotificationChangedReceiver, myFilter);
 
         mShow = false;
@@ -290,6 +291,29 @@ public class NotificationReceiver extends Service {
         mVibrator.vibrate(sDefaultVibrateTime);
     }
 
+    private boolean launchNotificationPkg(PendingIntent pendingIntent){
+        if (pendingIntent != null) {
+            try {
+                if(DEBUG) {
+                    Log.v(TAG, "launchNotificationPkg(pendingIntent) -> launch PendingIntent: " + pendingIntent.getCreatorPackage());
+                }
+
+                startIntentSender(pendingIntent.getIntentSender(), null,
+                        Intent.FLAG_ACTIVITY_NEW_TASK,
+                        Intent.FLAG_ACTIVITY_NEW_TASK, 0, null);
+            } catch (IntentSender.SendIntentException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     public boolean launchNotificationPkg() {
         if (hasNotification()) {
             PendingIntent pendingIntent = mPendingIntent;
@@ -348,16 +372,20 @@ public class NotificationReceiver extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
-            mNotificationPkg = intent.getStringExtra(NotificationListener.PACKAGE);
-            mPendingIntent = intent.getParcelableExtra(NotificationListener.PENDING_INTENT);
-            mMessageAmount = intent.getIntExtra(NotificationListener.AMOUNT, 0);
-            mIcon = intent.getIntExtra(NotificationListener.ICON, -1);
+           if(NotificationListener.MSG_NOTIFICATION_CHANGED.equals(intent.getAction())) {
+               mNotificationPkg = intent.getStringExtra(NotificationListener.PACKAGE);
+               mPendingIntent = intent.getParcelableExtra(NotificationListener.PENDING_INTENT);
+               mMessageAmount = intent.getIntExtra(NotificationListener.AMOUNT, 0);
+               mIcon = intent.getIntExtra(NotificationListener.ICON, -1);
 
-            if(mNotificationPkg.isEmpty()){
-                hideFloatView();
-            }else{
-                showFloatView();
-            }
+               if (mNotificationPkg.isEmpty()) {
+                   hideFloatView();
+               } else {
+                   showFloatView();
+               }
+           }else if(NotificationListener.MSG_AUTO_OPEN_MSG.equals(intent.getAction())){
+               launchNotificationPkg((PendingIntent)intent.getParcelableExtra(NotificationListener.PENDING_INTENT));
+           }
         }
     };
 }

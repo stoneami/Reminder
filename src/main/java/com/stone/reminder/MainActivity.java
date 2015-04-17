@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
 //        mAutoOpenMsg = (CheckBox)findViewById(R.id.cb_auto_open);
 //        findViewById(R.id.bt_listener).setOnClickListener(mListener);
 //
-//        startService(new Intent(MainActivity.this, NotificationReceiver.class));
+        startService(new Intent(MainActivity.this, NotificationReceiver.class));
 
         mPreferenceFragment = new MainPreferencFragment();
         getFragmentManager().beginTransaction().replace(android.R.id.content, mPreferenceFragment).commit();

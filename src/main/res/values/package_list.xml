@@ -6,4 +6,9 @@
         <item>com.android.incallui</item>
         <item>android</item>
     </array>
+
+    <array name="auto_open_packages">
+        <item>com.tencent.mobileqq</item>
+        <item>com.tencent.mm</item>
+    </array>
 </resources>
