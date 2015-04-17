@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:key="et_active_listener"
+        android:title="@string/enable_listener" />
+
+    <CheckBoxPreference
+        android:key="cb_float_view"
+        android:title="@string/label_permmit_float"
+        android:summary="@string/label_permmit_float_summary"
+        android:defaultValue="@bool/open_float_view"/>
+
+    <CheckBoxPreference
+        android:key="cb_auto_open_msg"
+        android:title="@string/label_auto_open_msg"
+        android:summary="@string/label_auto_open_msg_summary"
+        android:defaultValue="@bool/auto_open"/>
+</PreferenceScreen>

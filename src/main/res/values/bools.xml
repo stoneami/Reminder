@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="open_float_view">true</bool>
+    <bool name="need_vibrator">false</bool>
+    <bool name="auto_open">false</bool>
+</resources>

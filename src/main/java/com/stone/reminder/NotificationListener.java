@@ -274,7 +274,7 @@ public class NotificationListener extends NotificationListenerService {
          * 3.Notification is permitted APP
          * 4.Notification has Pending-Intent or launch-Intent
          */
-        return /*canCancel && */newPkg && permittedPkg && (pendingIntent != null || hasLaunchIntent);
+        return canCancel && newPkg && permittedPkg && (pendingIntent != null || hasLaunchIntent);
     }
 
     private boolean hasLaunchIntentForPackage(String pkg) {

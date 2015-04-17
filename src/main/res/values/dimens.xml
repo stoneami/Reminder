@@ -2,13 +2,8 @@
 <resources>
     <integer name="float_window_width">180</integer>
     <integer name="float_window_height">180</integer>
-
     <integer name="float_window_pos_x">0</integer>
     <integer name="float_window_pos_y">750</integer>
-
     <integer name="default_vibrate_time">15</integer>
-
     <integer name="anim_duration">200</integer>
-
-    <bool name="need_vibrator">false</bool>
 </resources>

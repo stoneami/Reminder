@@ -7,8 +7,12 @@
     <string name="enable_listener">Activate Notification Listener</string>
 
     <string name="label_permmit_float">Allow float view</string>
+    <string name="label_permmit_float_summary">显示悬浮窗显示通知</string>
 
     <string name="label">Notification Listener</string>
+
+    <string name="label_auto_open_msg">Automatic open message</string>
+    <string name="label_auto_open_msg_summary">自动打开通知应用</string>
 
     <string name="instruction">\'Notification Reminder\' will show APP notifications in a float window.\nFuctions：\n（1）single click: open notification\n（2）fling up and down: switch app\n（3）fling to left：clear current notifications\n(4)fling to right: clear all notifications</string>
 </resources>
