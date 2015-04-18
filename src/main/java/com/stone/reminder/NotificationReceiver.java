@@ -23,6 +23,7 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -65,10 +66,6 @@ public class NotificationReceiver extends Service {
         sPosY = getResources().getInteger(R.integer.float_window_pos_y);
 
         sDefaultVibrateTime = getResources().getInteger(R.integer.default_vibrate_time);
-        mNeedVibrator = getResources().getBoolean(R.bool.need_vibrator);
-
-//        mSlideLeftHideAnimation = AnimationUtils.loadAnimation(this, R.anim.out_to_left);
-//        mSlideRightShowAnimation = AnimationUtils.loadAnimation(this, R.anim.in_from_left);
     }
 
     @Override
@@ -259,15 +256,12 @@ public class NotificationReceiver extends Service {
     public void slideToLeftHide(){
         if(mShow){
             if(DEBUG) Log.i(TAG,"slideToLeftHide()");
-
-//            mContainer.startAnimation(mSlideLeftHideAnimation);
         }
     }
 
     public void slideToRightShow(){
         if(mShow){
             if(DEBUG) Log.i(TAG,"slideToRightShow()");
-//            mContainer.startAnimation(mSlideRightShowAnimation);
         }
     }
 
@@ -280,11 +274,10 @@ public class NotificationReceiver extends Service {
 
     private Vibrator mVibrator;
     private long sDefaultVibrateTime = 25;
-    private boolean mNeedVibrator;
     public void doVibrate(){
-        if(! mNeedVibrator) return;
+        boolean needVibrator = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(MainPreferencFragment.KEY_CLICK_VIBRATOR, false);
 
-        if(mVibrator == null) {
+        if(needVibrator && mVibrator == null) {
             mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         }
 
