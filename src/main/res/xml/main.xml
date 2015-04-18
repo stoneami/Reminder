@@ -15,4 +15,16 @@
         android:title="@string/label_auto_open_msg"
         android:summary="@string/label_auto_open_msg_summary"
         android:defaultValue="@bool/auto_open"/>
+
+    <CheckBoxPreference
+        android:key="@string/key_auto_open_msg"
+        android:title="@string/label_auto_open_msg"
+        android:summary="@string/label_auto_open_msg_summary"
+        android:defaultValue="@bool/auto_open"/>
+
+    <CheckBoxPreference
+        android:key="@string/key_open_everywhere"
+        android:title="@string/label_open_everywhere"
+        android:summary="@string/label_open_everywhere_summary"
+        android:defaultValue="@bool/auto_open_everywhere"/>
 </PreferenceScreen>

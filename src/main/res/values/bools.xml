@@ -3,4 +3,5 @@
     <bool name="open_float_view">true</bool>
     <bool name="need_vibrator">false</bool>
     <bool name="auto_open">false</bool>
+    <bool name="auto_open_everywhere">false</bool>
 </resources>

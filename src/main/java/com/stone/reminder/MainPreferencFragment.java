@@ -14,23 +14,23 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
     public static String KEY_ACTIVE_LISTENER;
     public static String KEY_FLOAT_VIEW;
     public static String KEY_AUTO_OPEN_MSG;
+    public static String KEY_AUTO_OPEN_EVERYWHERE;
 
     private Preference mPreferenceActiveListener;
     private Preference mPreferenceFloatView;
     private Preference mPreferenceAutoOpenMsg;
+    private Preference mPreferenceOpenEverywhere;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.main);
-
+    private void init(){
         KEY_ACTIVE_LISTENER = getString(R.string.key_active_listener);
         KEY_FLOAT_VIEW = getString(R.string.key_float_view);
         KEY_AUTO_OPEN_MSG = getString(R.string.key_auto_open_msg);
+        KEY_AUTO_OPEN_EVERYWHERE = getString(R.string.key_open_everywhere);
 
         mPreferenceActiveListener = findPreference(KEY_ACTIVE_LISTENER);
         mPreferenceFloatView = findPreference(KEY_FLOAT_VIEW);
         mPreferenceAutoOpenMsg = findPreference(KEY_AUTO_OPEN_MSG);
+        mPreferenceOpenEverywhere = findPreference(KEY_AUTO_OPEN_EVERYWHERE);
 
         mPreferenceActiveListener.setOnPreferenceClickListener(this);
         mPreferenceFloatView.setOnPreferenceClickListener(this);
@@ -39,6 +39,14 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
         mPreferenceActiveListener.setOnPreferenceChangeListener(this);
         mPreferenceFloatView.setOnPreferenceChangeListener(this);
         mPreferenceAutoOpenMsg.setOnPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.main);
+
+        init();
     }
 
     @Override

@@ -161,6 +161,8 @@ public class NotificationListener extends NotificationListenerService {
         registerReceiver(mReceiver, filter);
     }
 
+    private boolean mFirstTimeAfterBind = false;
+
     @Override
     public IBinder onBind(Intent intent) {
         if (DEBUG) Log.i(TAG, "onBind()");
@@ -170,7 +172,14 @@ public class NotificationListener extends NotificationListenerService {
             asyncLoadActiveNotification();
         }
 
+        mFirstTimeAfterBind = true;
         return super.onBind(intent);
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        mFirstTimeAfterBind = false;
+        return super.onUnbind(intent);
     }
 
     @Override
@@ -190,8 +199,9 @@ public class NotificationListener extends NotificationListenerService {
         // TODO Auto-generated method stub
         if (DEBUG) Log.i(TAG, "+++ onNotificationPosted(): " + sbn.getPackageName());
 
-        if (mPkgList.size() == 0) {
+        if (mFirstTimeAfterBind && mPkgList.size() == 0) {
             loadActiveNotifications();
+            mFirstTimeAfterBind = false;
         } else {
             if(shouldAutoOpenMsg(sbn)){
                 if(DEBUG) Log.i(TAG, "auto open message: " + sbn.getPackageName());
@@ -473,10 +483,11 @@ public class NotificationListener extends NotificationListenerService {
     }
 
     private boolean shouldAutoOpenMsg(StatusBarNotification sbn){
+        boolean openEverywhere = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(MainPreferencFragment.KEY_AUTO_OPEN_EVERYWHERE, false);
         boolean hasPendingIntent = (sbn.getNotification().contentIntent != null);
         boolean permit = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(MainPreferencFragment.KEY_AUTO_OPEN_MSG, false);
 
-        return permit && hasPendingIntent && atLauncher() ;
+        return permit && hasPendingIntent && (openEverywhere || atLauncher()) ;
     }
 
     private List<String> getLaunchers() {
