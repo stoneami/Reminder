@@ -69,6 +69,7 @@ public class FloatViewRoot extends LinearLayout {
                 mService.handleTouchUpEvent(event);
 
                 mLongPress = false;
+
                 break;
             default:
                 break;
@@ -87,6 +88,7 @@ public class FloatViewRoot extends LinearLayout {
 
     private void move(int x, int y){
         if (DEBUG) Log.i(TAG,"handleActionMove(): (" + x + "," + y + ")");
+
         if (mLongPress) {
             mService.moveFloatView(x, y);
         }
@@ -170,7 +172,6 @@ public class FloatViewRoot extends LinearLayout {
                 Log.i(TAG,"onSingleTapUp()");
             }
 
-            mService.doVibrate();
             mService.launchNotificationPkg();
 
             return false;
@@ -212,11 +213,9 @@ public class FloatViewRoot extends LinearLayout {
                 }
             }else  if (dX - NotificationReceiver.sWidth / 2 >= 0) {
                 if(velocityX > 0) {//left to right
-//                    mService.slideToRightShow();
                     mService.hideFloatView();
                     mService.sendBroadcast(new Intent(NotificationListener.MSG_REMOVE_ALL_NOTIFICATIONS));
                 }else{//right to left
-//                    mService.slideToLeftHide();
                     mService.sendBroadcast(new Intent(NotificationListener.MSG_REMOVE_CURRENT_NOTIFICATIONS));
                 }
 
@@ -227,6 +226,6 @@ public class FloatViewRoot extends LinearLayout {
     }
 
     private static enum DisplayArea{
-        LEFT,RIGHT,LEFT_AND_RIGHT
+        LEFT,RIGHT
     }
 }

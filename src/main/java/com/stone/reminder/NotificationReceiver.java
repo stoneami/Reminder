@@ -46,9 +46,6 @@ public class NotificationReceiver extends Service {
     private WindowManager.LayoutParams mWinParams;
     private WindowManager mWindowManager;
 
-//    private Animation mSlideLeftHideAnimation;
-//    private Animation mSlideRightShowAnimation;
-
     public NotificationReceiver() {
     }
 
@@ -64,8 +61,6 @@ public class NotificationReceiver extends Service {
 
         sPosX = getResources().getInteger(R.integer.float_window_pos_x);
         sPosY = getResources().getInteger(R.integer.float_window_pos_y);
-
-        sDefaultVibrateTime = getResources().getInteger(R.integer.default_vibrate_time);
     }
 
     @Override
@@ -162,10 +157,6 @@ public class NotificationReceiver extends Service {
         if(!mShow) {
             mShow = true;
             mWindowManager.addView(mFloatLayout, mWinParams);
-
-//            mFloatLayout.measure(View.MeasureSpec.makeMeasureSpec(0,
-//                    View.MeasureSpec.UNSPECIFIED), View.MeasureSpec
-//                    .makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
         }
 
         setNormalBgOfFloatView();
@@ -204,33 +195,21 @@ public class NotificationReceiver extends Service {
         if(DEBUG) {
             Log.i(TAG, "enterDrag() +++");
         }
-
-        //setDragBgOfFloatView();
     }
 
     public void quitDrag(){
         if(DEBUG) {
             Log.i(TAG, "quitDrag() ---");
         }
-
-        //setNormalBgOfFloatView();
     }
 
     private void setNormalBgOfFloatView(){
         if(mMessageAmount > 3){
-//            mFloatLayout.setBackgroundResource(R.drawable.red_background);
             mContainer.setBackgroundResource(R.drawable.red_background);
 
         }else{
-//            mFloatLayout.setBackgroundResource(R.drawable.green_background);
             mContainer.setBackgroundResource(R.drawable.green_background);
         }
-    }
-
-    private void setDragBgOfFloatView(){
-//        mFloatLayout.setBackgroundResource(R.drawable.yellow_background);
-        mContainer.setBackgroundResource(R.drawable.yellow_background);
-
     }
 
     public void handleTouchDownEvent(MotionEvent event){
@@ -242,7 +221,6 @@ public class NotificationReceiver extends Service {
     }
 
     private void setTouchDonwBgOfFloatView(){
-//        mFloatLayout.setBackgroundResource(R.drawable.yellow_background);
         mContainer.setBackgroundResource(R.drawable.yellow_background);
     }
 
@@ -253,35 +231,11 @@ public class NotificationReceiver extends Service {
         mWindowManager.updateViewLayout(mFloatLayout, mWinParams);
     }
 
-    public void slideToLeftHide(){
-        if(mShow){
-            if(DEBUG) Log.i(TAG,"slideToLeftHide()");
-        }
-    }
-
-    public void slideToRightShow(){
-        if(mShow){
-            if(DEBUG) Log.i(TAG,"slideToRightShow()");
-        }
-    }
-
     //
     // launch APP
     //
     public boolean hasNotification(){
         return mNotificationPkg != null && ! mNotificationPkg.isEmpty();
-    }
-
-    private Vibrator mVibrator;
-    private long sDefaultVibrateTime = 25;
-    public void doVibrate(){
-        boolean needVibrator = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(MainPreferencFragment.KEY_CLICK_VIBRATOR, false);
-
-        if(needVibrator && mVibrator == null) {
-            mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        }
-
-        mVibrator.vibrate(sDefaultVibrateTime);
     }
 
     private boolean launchNotificationPkg(PendingIntent pendingIntent){

@@ -15,7 +15,6 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
     public static String KEY_FLOAT_VIEW;
     public static String KEY_AUTO_OPEN_MSG;
     public static String KEY_AUTO_OPEN_EVERYWHERE;
-    public static String KEY_CLICK_VIBRATOR;
 
     private Preference mPreferenceActiveListener;
     private Preference mPreferenceFloatView;
@@ -27,7 +26,6 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
         KEY_FLOAT_VIEW = getString(R.string.key_float_view);
         KEY_AUTO_OPEN_MSG = getString(R.string.key_auto_open_msg);
         KEY_AUTO_OPEN_EVERYWHERE = getString(R.string.key_open_everywhere);
-        KEY_CLICK_VIBRATOR = getString(R.string.key_click_vibrator);
 
         mPreferenceActiveListener = findPreference(KEY_ACTIVE_LISTENER);
         mPreferenceFloatView = findPreference(KEY_FLOAT_VIEW);

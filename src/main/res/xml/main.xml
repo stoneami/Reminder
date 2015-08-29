@@ -21,10 +21,4 @@
         android:title="@string/label_open_everywhere"
         android:summary="@string/label_open_everywhere_summary"
         android:defaultValue="@bool/auto_open_everywhere"/>
-
-    <CheckBoxPreference
-        android:key="@string/key_click_vibrator"
-        android:title="@string/label_click_vibrator"
-        android:summary="@string/label_click_vibrator_summary"
-        android:defaultValue="@bool/click_vibrator"/>
 </PreferenceScreen>
