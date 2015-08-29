@@ -45,6 +45,8 @@ public class NotificationListener extends NotificationListenerService {
     public static final String MSG_REQUEST_NEXT_NOTIFICATION = "msg.j.request.next.notification";
     public static final String MSG_REQUEST_PRE_NOTIFICATION = "msg.j.request.pre.notification";
     public static final String MSG_REMOVE_CURRENT_NOTIFICATIONS = "msg.j.remove.current.notification";
+    public static final String MSG_LOAD_NOTIFICATIONS = "msg.j.load.notifications";
+    public static final String MSG_ALWAYS_SHOW_FLOAT_VIEW = "msg.j.always.show.float.view";
 
     public static final String MSG_AUTO_OPEN_MSG = "msg.j.auto.open.message";
 
@@ -141,6 +143,14 @@ public class NotificationListener extends NotificationListenerService {
                     mPkgList.clear();
                     notifyNotificationChanged(null);
                 }
+            }else if(MSG_LOAD_NOTIFICATIONS.equals(action)){
+                asyncLoadActiveNotification();
+            }else if(MSG_ALWAYS_SHOW_FLOAT_VIEW.equals(action)){
+                if (DEBUG) Log.i(TAG, "MSG_ALWAYS_SHOW_FLOAT_VIEW");
+                if (mPkgList.isEmpty()) {
+                    if (DEBUG) Log.i(TAG, "notifyNotificationChanged(null)");
+                    notifyNotificationChanged(null);
+                }
             }
         }
     };
@@ -158,6 +168,8 @@ public class NotificationListener extends NotificationListenerService {
         filter.addAction(MSG_REQUEST_NEXT_NOTIFICATION);
         filter.addAction(MSG_REQUEST_PRE_NOTIFICATION);
         filter.addAction(MSG_REMOVE_CURRENT_NOTIFICATIONS);
+        filter.addAction(MSG_LOAD_NOTIFICATIONS);
+        filter.addAction(MSG_ALWAYS_SHOW_FLOAT_VIEW);
         registerReceiver(mReceiver, filter);
     }
 
@@ -263,7 +275,9 @@ public class NotificationListener extends NotificationListenerService {
                 int index = findHighPriorityItem();
                 notifyNotificationChanged(mPkgList.get(index));
             } else {
-                if (DEBUG) Log.i(TAG, "loadActiveNotifications(): no active notification !");
+                if (DEBUG) Log.i(TAG, "loadActiveNotifications(): no active notification, show default float view!");
+                //show the default float view
+                notifyNotificationChanged(null);
             }
         }
     }

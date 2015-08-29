@@ -6,12 +6,12 @@
     <string name="enable_listener">Activate Notification Listener</string>
 
     <string name="label_permmit_float">Allow float view</string>
-    <string name="label_permmit_float_summary">Allow to show the message in float window</string>
+    <string name="label_permmit_float_summary"></string>
 
     <string name="label">Notification Listener</string>
 
     <string name="label_auto_open_msg">Automatic open message</string>
-    <string name="label_auto_open_msg_summary">Open the App automatic</string>
+    <string name="label_auto_open_msg_summary"></string>
 
     <string name="label_click_vibrator">单击振动</string>
     <string name="label_click_vibrator_summary">单击悬浮窗时有振动效果</string>
@@ -20,7 +20,10 @@
 
     <string name="key_active_listener" translatable="false">key_active_listener</string>
     <string name="key_float_view" translatable="false">key_float_view</string>
+    <string name="key_always_show_float_view" translatable="false">key_always_show_float_view</string>
     <string name="key_auto_open_msg" translatable="false">key_auto_open_msg</string>
     <string name="key_open_everywhere" translatable="false">key_open_everywhere</string>
     <string name="key_click_vibrator" translatable="false">key_click_vibrator</string>
+
+    <string name="label_always_show_float_view">Always show float window</string>
 </resources>

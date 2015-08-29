@@ -124,6 +124,13 @@ public class FloatViewRoot extends LinearLayout {
         return ret;
     }
 
+    private void performHOME(){
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        mService.startActivity(intent);
+    }
+
     public void setService(NotificationReceiver service) {
         mService = service;
     }
@@ -137,13 +144,18 @@ public class FloatViewRoot extends LinearLayout {
                 Log.i(TAG,"onSingleTapConfirmed()");
             }
 
+            performHOME();
             return false;
         }
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
+            if(DEBUG){
+                Log.i(TAG,"onDoubleTap()");
+            }
 
-            return false;
+            mService.launchNotificationPkg();
+            return true;
         }
 
         @Override
@@ -163,19 +175,13 @@ public class FloatViewRoot extends LinearLayout {
 
         @Override
         public void onShowPress(MotionEvent e) {
-
         }
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-            if(DEBUG){
-                Log.i(TAG,"onSingleTapUp()");
-            }
-
-            mService.launchNotificationPkg();
-
             return false;
         }
+
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
@@ -213,10 +219,10 @@ public class FloatViewRoot extends LinearLayout {
                 }
             }else  if (dX - NotificationReceiver.sWidth / 2 >= 0) {
                 if(velocityX > 0) {//left to right
-                    mService.hideFloatView();
-                    mService.sendBroadcast(new Intent(NotificationListener.MSG_REMOVE_ALL_NOTIFICATIONS));
+                    //mService.hideFloatView();
+                    //mService.sendBroadcast(new Intent(NotificationListener.MSG_REMOVE_ALL_NOTIFICATIONS));
                 }else{//right to left
-                    mService.sendBroadcast(new Intent(NotificationListener.MSG_REMOVE_CURRENT_NOTIFICATIONS));
+                    //mService.sendBroadcast(new Intent(NotificationListener.MSG_REMOVE_CURRENT_NOTIFICATIONS));
                 }
 
             }

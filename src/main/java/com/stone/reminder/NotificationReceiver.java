@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
@@ -147,6 +148,26 @@ public class NotificationReceiver extends Service {
                 mWindowManager.removeView(mFloatLayout);
             }
         }
+    }
+
+    public void showDefaultFloatView(){
+        if(DEBUG) {
+            Log.i(TAG, "showDefaultFloatView(): mShow=" + mShow);
+        }
+
+        if(!mShow) {
+            mShow = true;
+            mWindowManager.addView(mFloatLayout, mWinParams);
+        }
+
+        setNormalBgOfFloatView();
+
+        TextView textView = (TextView)mFloatLayout.findViewById(R.id.amount);
+        ImageView imageView = (ImageView)mFloatLayout.findViewById(R.id.icon);
+
+        imageView.setVisibility(View.GONE);
+        textView.setVisibility(View.VISIBLE);
+        ((TextView)mFloatLayout.findViewById(R.id.amount)).setText(String.valueOf(mMessageAmount));
     }
 
     public void showFloatView(){
@@ -326,7 +347,12 @@ public class NotificationReceiver extends Service {
                mIcon = intent.getIntExtra(NotificationListener.ICON, -1);
 
                if (mNotificationPkg.isEmpty()) {
-                   hideFloatView();
+                   SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(NotificationReceiver.this);
+                   if(sp.getBoolean(MainPreferencFragment.KEY_ALWAYS_SHOW_FLOAT_VIEW, false)) {
+                       showDefaultFloatView();
+                   }else{
+                       hideFloatView();
+                   }
                } else {
                    showFloatView();
                }
