@@ -113,18 +113,12 @@ public class NotificationReceiver extends Service {
     private static boolean mShow = false;
 
     private void createFloatView() {
-        mWinParams = new WindowManager.LayoutParams();
-
-        //获取的是WindowManagerImpl.CompatModeWrapper
         mWindowManager = (WindowManager) getApplication().getSystemService(getApplication().WINDOW_SERVICE);
 
+        mWinParams = new WindowManager.LayoutParams();
         mWinParams.type = LayoutParams.TYPE_PHONE;
-
-        //设置图片格式，效果为背景透明
         mWinParams.format = PixelFormat.RGBA_8888;
-
         mWinParams.flags = LayoutParams.FLAG_NOT_FOCUSABLE;
-
         mWinParams.gravity = Gravity.LEFT | Gravity.TOP;
         mWinParams.x = sPosX;
         mWinParams.y = sPosY;
@@ -135,6 +129,8 @@ public class NotificationReceiver extends Service {
         mContainer = (LinearLayout)mFloatLayout.findViewById(R.id.container_layout);
 
         mFloatLayout.setService(this);
+
+        showDefaultFloatView();
     }
 
     public void hideFloatView(){
@@ -165,9 +161,9 @@ public class NotificationReceiver extends Service {
         TextView textView = (TextView)mFloatLayout.findViewById(R.id.amount);
         ImageView imageView = (ImageView)mFloatLayout.findViewById(R.id.icon);
 
-        imageView.setVisibility(View.GONE);
-        textView.setVisibility(View.VISIBLE);
-        ((TextView)mFloatLayout.findViewById(R.id.amount)).setText(String.valueOf(mMessageAmount));
+        imageView.setImageDrawable(getDrawable(R.drawable.upper_h));
+        imageView.setVisibility(View.VISIBLE);
+        textView.setVisibility(View.GONE);
     }
 
     public void showFloatView(){
@@ -204,11 +200,11 @@ public class NotificationReceiver extends Service {
         if(drawable != null) {
             imageView.setVisibility(View.VISIBLE);
             textView.setVisibility(View.GONE);
-            ((ImageView)mFloatLayout.findViewById(R.id.icon)).setImageDrawable(drawable);
+            imageView.setImageDrawable(drawable);
         }else{
             imageView.setVisibility(View.GONE);
             textView.setVisibility(View.VISIBLE);
-            ((TextView)mFloatLayout.findViewById(R.id.amount)).setText(String.valueOf(mMessageAmount));
+            textView.setText(String.valueOf(mMessageAmount));
         }
     }
 
@@ -247,7 +243,7 @@ public class NotificationReceiver extends Service {
 
     public void moveFloatView(int x, int y){
         mWinParams.x = x - sWidth / 2;
-        mWinParams.y = y - sHeight / 2;
+        mWinParams.y = y - sHeight / 2 - 45;
 
         mWindowManager.updateViewLayout(mFloatLayout, mWinParams);
     }
