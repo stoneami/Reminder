@@ -82,6 +82,8 @@ public class NotificationReceiver extends Service {
 
         mShow = false;
         createFloatView();
+
+        showDefaultFloatView();
     }
 
     @Override
@@ -129,8 +131,6 @@ public class NotificationReceiver extends Service {
         mContainer = (LinearLayout)mFloatLayout.findViewById(R.id.container_layout);
 
         mFloatLayout.setService(this);
-
-        showDefaultFloatView();
     }
 
     public void hideFloatView(){
