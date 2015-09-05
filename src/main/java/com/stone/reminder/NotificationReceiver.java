@@ -345,11 +345,20 @@ public class NotificationReceiver extends Service {
                if (mNotificationPkg.isEmpty()) {
                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(NotificationReceiver.this);
                    if(sp.getBoolean(MainPreferencFragment.KEY_ALWAYS_SHOW_FLOAT_VIEW, false)) {
+                       if(DEBUG) {
+                           Log.i(TAG, "mNotificationChangedReceiver.onReceive(): showDefaultFloatView()");
+                       }
                        showDefaultFloatView();
                    }else{
+                       if(DEBUG) {
+                           Log.i(TAG, "mNotificationChangedReceiver.onReceive(): hideFloatView()");
+                       }
                        hideFloatView();
                    }
                } else {
+                   if(DEBUG) {
+                       Log.i(TAG, "mNotificationChangedReceiver.onReceive(): showFloatView()");
+                   }
                    showFloatView();
                }
            }else if(NotificationListener.MSG_AUTO_OPEN_MSG.equals(intent.getAction())){
