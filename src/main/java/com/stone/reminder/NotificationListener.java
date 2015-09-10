@@ -105,7 +105,7 @@ public class NotificationListener extends NotificationListenerService {
 
                 notifyNotificationChanged(null);
             } else if (MSG_REQUEST_NEXT_NOTIFICATION.equals(action)) {
-                int index = findNextHighPriorityItem(true);
+                int index = findNextHighPriorityItem(false);
 
                 if (DEBUG) Log.i(TAG, "MSG_REQUEST_NEXT_NOTIFICATION: index=" + index);
 
@@ -118,7 +118,7 @@ public class NotificationListener extends NotificationListenerService {
                     notifyNotificationChanged(null);
                 }
             } else if (MSG_REQUEST_PRE_NOTIFICATION.equals(action)) {
-                int index = findPreHighPriorityItem(true);
+                int index = findPreHighPriorityItem(false);
 
                 if (DEBUG) Log.i(TAG, "MSG_REQUEST_PRE_NOTIFICATION: index=" + index);
 

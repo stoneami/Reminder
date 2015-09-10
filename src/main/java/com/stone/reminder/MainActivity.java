@@ -17,9 +17,9 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        android.util.Log.i("jerry",
-                "Country: " + getResources().getConfiguration().locale.getCountry() +
-                " Language: " + getResources().getConfiguration().locale.getLanguage());
+//        android.util.Log.i("jerry",
+//                "Country: " + getResources().getConfiguration().locale.getCountry() +
+//                " Language: " + getResources().getConfiguration().locale.getLanguage());
 
         getWindow().setBackgroundDrawableResource(R.drawable.background);
 

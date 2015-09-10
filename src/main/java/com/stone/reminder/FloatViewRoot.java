@@ -18,22 +18,26 @@ public class FloatViewRoot extends LinearLayout {
 
     private NotificationReceiver mService;
 
-    private static int sWidth = 1080;
-    private static int sHeight = 1080;
-    private static float sMinHeightRate = 0.3f;
-    private static float sMaxHeightRate = 0.7f;
-    private static int sMinHeight = 0;
-    private static int sMaxHeight = 1080;
+    private int mWidth = 1080;
+    private int mHeight = 1080;
+    private float mMinHeightRate = 0.3f;
+    private float mMaxHeightRate = 0.7f;
+    private int mMinHeight = 0;
+    private int mMaxHeight = 1080;
 
     private void init(Context context){
         mDetector = new GestureDetector(context, mListener);
         mDetector.setOnDoubleTapListener(mDoubleTapListener);
 
-        sWidth = getResources().getDisplayMetrics().widthPixels;
-        sHeight = getResources().getDisplayMetrics().heightPixels;
+        iniDisplayMetrics();
+    }
 
-        sMinHeight = (int)(sHeight * sMinHeightRate);
-        sMaxHeight = (int)(sHeight * sMaxHeightRate);
+    private void iniDisplayMetrics(){
+        mWidth = getResources().getDisplayMetrics().widthPixels;
+        mHeight = getResources().getDisplayMetrics().heightPixels;
+
+        mMinHeight = (int)(mHeight * mMinHeightRate);
+        mMaxHeight = (int)(mHeight * mMaxHeightRate);
     }
 
     public FloatViewRoot(Context context, AttributeSet attrs) {
@@ -65,7 +69,7 @@ public class FloatViewRoot extends LinearLayout {
                     mService.quitDrag();
                 }
 
-                handleActionUp(adjustXPosition((int) event.getRawX(), DisplayArea.LEFT), (int) event.getRawY());
+                handleActionUp((int) event.getRawX(), (int) event.getRawY());
                 mService.handleTouchUpEvent(event);
 
                 mLongPress = false;
@@ -83,7 +87,9 @@ public class FloatViewRoot extends LinearLayout {
     }
 
     private void handleActionUp(int x, int y){
-        move(adjustXPosition(x, DisplayArea.LEFT), adjustYPosition(y));
+        iniDisplayMetrics();
+
+        move(adjustXPosition(x, DisplayArea.UNCERTAIN), adjustYPosition(y));
     }
 
     private void move(int x, int y){
@@ -100,12 +106,12 @@ public class FloatViewRoot extends LinearLayout {
         if(area == DisplayArea.LEFT){
             ret = 0;
         }else if(area == DisplayArea.RIGHT){
-            ret = sWidth;
+            ret = mWidth;
         }else{
-            if(x - sWidth/2 < 0){//left
+            if(x - mWidth /2 < 0){//left
                 ret = 0;
             }else{//right
-                ret = sWidth;
+                ret = mWidth;
             }
         }
 
@@ -115,10 +121,10 @@ public class FloatViewRoot extends LinearLayout {
     private int adjustYPosition(int y){
         int ret = y;
 
-        if(y < sMinHeight){//up
-            ret = sMinHeight;
-        }else if(y > sMaxHeight){//down
-            ret = sMaxHeight;
+        if(y < mMinHeight){//up
+            ret = mMinHeight;
+        }else if(y > mMaxHeight){//down
+            ret = mMaxHeight;
         }
 
         return ret;
@@ -232,6 +238,6 @@ public class FloatViewRoot extends LinearLayout {
     }
 
     private static enum DisplayArea{
-        LEFT,RIGHT
+        LEFT,RIGHT,UNCERTAIN
     }
 }

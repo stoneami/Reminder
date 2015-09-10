@@ -23,7 +23,6 @@ import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.IBinder;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -35,8 +34,11 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+
+import android.app.ActivityManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NotificationReceiver extends Service {
     private static final String TAG = "NotificationReceiver";
@@ -344,7 +346,7 @@ public class NotificationReceiver extends Service {
 
                if (mNotificationPkg.isEmpty()) {
                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(NotificationReceiver.this);
-                   if(sp.getBoolean(MainPreferencFragment.KEY_ALWAYS_SHOW_FLOAT_VIEW, false)) {
+                   if(sp.getBoolean(MainPreferencFragment.KEY_ALWAYS_SHOW_FLOAT_VIEW, true)) {
                        if(DEBUG) {
                            Log.i(TAG, "mNotificationChangedReceiver.onReceive(): showDefaultFloatView()");
                        }
@@ -366,4 +368,16 @@ public class NotificationReceiver extends Service {
            }
         }
     };
+
+    /////////////
+    private List<ActivityManager.RecentTaskInfo> mRecentTasks = new ArrayList<ActivityManager.RecentTaskInfo>(10);
+    private void iniRecentTask() {
+        mRecentTasks.clear();
+        final ActivityManager am = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
+        mRecentTasks = am.getRecentTasks(10, android.app.ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+    }
+
+    private void switchToPreTask(){
+
+    }
 }
