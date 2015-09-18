@@ -1,5 +1,6 @@
 package com.stone.reminder;
 
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -8,6 +9,13 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.content.pm.PackageManager;
+import android.content.pm.ActivityInfo;
 
 /**
  * Created by 80048914 on 2015/2/27.
@@ -224,6 +232,8 @@ public class FloatViewRoot extends LinearLayout {
                     mService.sendBroadcast(new Intent(NotificationListener.MSG_REQUEST_PRE_NOTIFICATION));
                 }
             }else  if (dX - NotificationReceiver.sWidth / 2 >= 0) {
+                Log.i(TAG, " iniRecentTask() " );
+                iniRecentTask();
                 if(velocityX > 0) {//left to right
                     //mService.hideFloatView();
                     //mService.sendBroadcast(new Intent(NotificationListener.MSG_REMOVE_ALL_NOTIFICATIONS));
@@ -239,5 +249,39 @@ public class FloatViewRoot extends LinearLayout {
 
     private static enum DisplayArea{
         LEFT,RIGHT,UNCERTAIN
+    }
+
+
+    /////////////
+    private List<ActivityManager.RecentTaskInfo> mRecentTasks = new ArrayList<>(0);
+    private void iniRecentTask() {
+        mRecentTasks.clear();
+
+        final ActivityManager am = (ActivityManager)mService.getSystemService(Context.ACTIVITY_SERVICE);
+        final PackageManager pm = mService.getPackageManager();
+        mRecentTasks = am.getRecentTasks(10, ActivityManager.RECENT_IGNORE_UNAVAILABLE | 0x0004 /*ActivityManager.RECENT_INCLUDE_PROFILES*/);
+
+        if(mRecentTasks == null || mRecentTasks.isEmpty()) {
+            mRecentTasks = new ArrayList<>(0);
+            Log.i(TAG, " NOTHING FOUND ??? " );
+            return;
+        }
+
+        ActivityInfo homeInfo = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
+                .resolveActivityInfo(pm, 0);
+
+        Log.i(TAG, "size=" + mRecentTasks.size());
+        for(int i=0; i<mRecentTasks.size(); i++ ){
+            if(homeInfo.packageName.equals(mRecentTasks.get(i).baseIntent.getPackage())) {
+                //mRecentTasks.remove(i);
+                //break;
+            }
+
+            Log.i(TAG, i +" : " + mRecentTasks.get(i).baseIntent);
+        }
+    }
+
+    private void switchToPreTask(){
+
     }
 }

@@ -37,9 +37,6 @@ import android.widget.TextView;
 
 import android.app.ActivityManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class NotificationReceiver extends Service {
     private static final String TAG = "NotificationReceiver";
     private static final boolean DEBUG = true;
@@ -369,15 +366,4 @@ public class NotificationReceiver extends Service {
         }
     };
 
-    /////////////
-    private List<ActivityManager.RecentTaskInfo> mRecentTasks = new ArrayList<ActivityManager.RecentTaskInfo>(10);
-    private void iniRecentTask() {
-        mRecentTasks.clear();
-        final ActivityManager am = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
-        mRecentTasks = am.getRecentTasks(10, android.app.ActivityManager.RECENT_IGNORE_UNAVAILABLE);
-    }
-
-    private void switchToPreTask(){
-
-    }
 }
