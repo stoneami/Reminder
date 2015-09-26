@@ -18,12 +18,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
+
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -35,7 +34,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import android.app.ActivityManager;
+import com.stone.utils.PreferenceUtil;
 
 public class NotificationReceiver extends Service {
     private static final String TAG = "NotificationReceiver";
@@ -82,7 +81,9 @@ public class NotificationReceiver extends Service {
         mShow = false;
         createFloatView();
 
-        showDefaultFloatView();
+        if(PreferenceUtil.getInstance(NotificationReceiver.this).permitFloatView()) {
+            showDefaultFloatView();
+        }
     }
 
     @Override
@@ -241,8 +242,13 @@ public class NotificationReceiver extends Service {
     }
 
     public void moveFloatView(int x, int y){
+        int old_x = mWinParams.x;
+        int old_y = mWinParams.y;
+
         mWinParams.x = x - sWidth / 2;
-        mWinParams.y = y - sHeight / 2 - 45;
+        mWinParams.y = y - sHeight / 2;// - 45;
+
+        Log.i(TAG, "old_x=" + old_x + " old_y=" + old_y + " | new_x=" + mWinParams.x + " new_y=" + mWinParams.y + " | (" + Math.abs(mWinParams.x-old_x) + "," + Math.abs(mWinParams.y-old_y) + ")");
 
         mWindowManager.updateViewLayout(mFloatLayout, mWinParams);
     }
@@ -342,8 +348,7 @@ public class NotificationReceiver extends Service {
                mIcon = intent.getIntExtra(NotificationListener.ICON, -1);
 
                if (mNotificationPkg.isEmpty()) {
-                   SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(NotificationReceiver.this);
-                   if(sp.getBoolean(MainPreferencFragment.KEY_ALWAYS_SHOW_FLOAT_VIEW, true)) {
+                   if(PreferenceUtil.getInstance(NotificationReceiver.this).showDefaultFloatView()) {
                        if(DEBUG) {
                            Log.i(TAG, "mNotificationChangedReceiver.onReceive(): showDefaultFloatView()");
                        }

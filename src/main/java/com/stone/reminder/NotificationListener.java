@@ -20,7 +20,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
+
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
@@ -29,11 +29,13 @@ import android.content.pm.ResolveInfo;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 
+import com.stone.utils.PreferenceUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationListener extends NotificationListenerService {
-    private static final String TAG = "NotificationListenerService";
+    private static final String TAG = "NotificationListener";
 
     private static final boolean DEBUG = true;
 
@@ -76,7 +78,7 @@ public class NotificationListener extends NotificationListenerService {
             mAutoOpenPackage.add(list[i]);
         }
 
-        mActivityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
+        mActivityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         mPackageManager = getPackageManager();
     }
 
@@ -130,22 +132,22 @@ public class NotificationListener extends NotificationListenerService {
                 } else {
                     notifyNotificationChanged(null);
                 }
-            } else if(MSG_REMOVE_CURRENT_NOTIFICATIONS.equals(action)){
+            } else if (MSG_REMOVE_CURRENT_NOTIFICATIONS.equals(action)) {
                 if (DEBUG) Log.i(TAG, "MSG_REMOVE_CURRENT_NOTIFICATIONS");
-                if(mPkgList.size() > 1) {
+                if (mPkgList.size() > 1) {
                     String prePkg = mCurPkg;
                     mCurPkg = mPkgList.get(findNextHighPriorityItem(true)).mPkg;
                     mPkgList.remove(getItemIndex(prePkg));
 
                     NotificationListenerItem item = mPkgList.get(getItemIndex(mCurPkg));
                     notifyNotificationChanged(item);
-                }else{
+                } else {
                     mPkgList.clear();
                     notifyNotificationChanged(null);
                 }
-            }else if(MSG_LOAD_NOTIFICATIONS.equals(action)){
+            } else if (MSG_LOAD_NOTIFICATIONS.equals(action)) {
                 asyncLoadActiveNotification();
-            }else if(MSG_ALWAYS_SHOW_FLOAT_VIEW.equals(action)){
+            } else if (MSG_ALWAYS_SHOW_FLOAT_VIEW.equals(action)) {
                 if (DEBUG) Log.i(TAG, "MSG_ALWAYS_SHOW_FLOAT_VIEW");
                 if (mPkgList.isEmpty()) {
                     if (DEBUG) Log.i(TAG, "notifyNotificationChanged(null)");
@@ -215,12 +217,12 @@ public class NotificationListener extends NotificationListenerService {
             loadActiveNotifications();
             mFirstTimeAfterBind = false;
         } else {
-            if(shouldAutoOpenMsg(sbn)){
-                if(DEBUG) Log.i(TAG, "auto open message: " + sbn.getPackageName());
+            if (shouldAutoOpenMsg(sbn)) {
+                if (DEBUG) Log.i(TAG, "auto open message: " + sbn.getPackageName());
                 Intent intent = new Intent(MSG_AUTO_OPEN_MSG);
                 intent.putExtra(PENDING_INTENT, sbn.getNotification().contentIntent);
                 sendBroadcast(intent);
-            }else{
+            } else {
                 checkIfNeedAddNotification(sbn);
             }
         }
@@ -275,7 +277,8 @@ public class NotificationListener extends NotificationListenerService {
                 int index = findHighPriorityItem();
                 notifyNotificationChanged(mPkgList.get(index));
             } else {
-                if (DEBUG) Log.i(TAG, "loadActiveNotifications(): no active notification, show default float view!");
+                if (DEBUG)
+                    Log.i(TAG, "loadActiveNotifications(): no active notification, show default float view!");
                 //show the default float view
                 notifyNotificationChanged(null);
             }
@@ -347,17 +350,14 @@ public class NotificationListener extends NotificationListenerService {
 
                 item = mPkgList.get(idx);
                 if (DEBUG)
-                    Log.v(TAG, "remove the notification of " + pkg
-                            + " | curPkg: " + item.mPkg);
+                    Log.v(TAG, "remove notification(" + pkg
+                            + "), curPkg: " + item.mPkg);
             } else {
                 if (DEBUG)
-                    Log.v(TAG, "remove the notification of " + pkg
-                            + " | no notification left!");
+                    Log.v(TAG, "remove notification(" + pkg
+                            + "), no notification left!");
             }
             notifyNotificationChanged(item);
-        } else {
-            if (DEBUG)
-                Log.v(TAG, "no need to remove " + pkg);
         }
     }
 
@@ -496,12 +496,14 @@ public class NotificationListener extends NotificationListenerService {
         return index;
     }
 
-    private boolean shouldAutoOpenMsg(StatusBarNotification sbn){
-        boolean openEverywhere = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(MainPreferencFragment.KEY_AUTO_OPEN_EVERYWHERE, false);
-        boolean hasPendingIntent = (sbn.getNotification().contentIntent != null);
-        boolean permit = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(MainPreferencFragment.KEY_AUTO_OPEN_MSG, false);
+    private boolean shouldAutoOpenMsg(StatusBarNotification sbn) {
+        boolean openEverywhere = PreferenceUtil.getInstance(this).openMsgEverywhere();
+        boolean openAtHOME = PreferenceUtil.getInstance(this).openMsgOnlyHOME();
+        boolean permit = PreferenceUtil.getInstance(this).permitFloatView();
 
-        return permit && hasPendingIntent && (openEverywhere || atLauncher()) ;
+        boolean hasPendingIntent = (sbn.getNotification().contentIntent != null);
+
+        return permit && hasPendingIntent && (openEverywhere || (openAtHOME && atLauncher()));
     }
 
     private List<String> getLaunchers() {
@@ -510,25 +512,25 @@ public class NotificationListener extends NotificationListenerService {
         intent.addCategory(Intent.CATEGORY_HOME);
         List<ResolveInfo> resolveInfo = mPackageManager.queryIntentActivities(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
-        for(ResolveInfo ri : resolveInfo){
+        for (ResolveInfo ri : resolveInfo) {
             launchers.add(ri.activityInfo.packageName);
         }
 
         return launchers;
     }
 
-    private boolean atLauncher(){
+    private boolean atLauncher() {
         long start = System.currentTimeMillis();
         boolean ret = false;
         List<String> launchers = getLaunchers();
         List<RunningTaskInfo> top = mActivityManager.getRunningTasks(1);
-        if(top != null && top.size()>0 && launchers != null && launchers.size()>0){
-            if(launchers.contains(top.get(0).topActivity.getPackageName())){
+        if (top != null && top.size() > 0 && launchers != null && launchers.size() > 0) {
+            if (launchers.contains(top.get(0).topActivity.getPackageName())) {
                 ret = true;
             }
         }
 
-        Log.i(TAG, "atLauncher() cost: " + (System.currentTimeMillis()-start) + "ms");
+        Log.i(TAG, "atLauncher() cost: " + (System.currentTimeMillis() - start) + "ms");
         return ret;
     }
 

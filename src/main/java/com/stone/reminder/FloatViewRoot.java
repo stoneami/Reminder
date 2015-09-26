@@ -232,8 +232,8 @@ public class FloatViewRoot extends LinearLayout {
                     mService.sendBroadcast(new Intent(NotificationListener.MSG_REQUEST_PRE_NOTIFICATION));
                 }
             }else  if (dX - NotificationReceiver.sWidth / 2 >= 0) {
-                Log.i(TAG, " iniRecentTask() " );
-                iniRecentTask();
+                //Log.i(TAG, " iniRecentTask() " );
+                //iniRecentTask();
                 if(velocityX > 0) {//left to right
                     //mService.hideFloatView();
                     //mService.sendBroadcast(new Intent(NotificationListener.MSG_REMOVE_ALL_NOTIFICATIONS));
@@ -259,7 +259,7 @@ public class FloatViewRoot extends LinearLayout {
 
         final ActivityManager am = (ActivityManager)mService.getSystemService(Context.ACTIVITY_SERVICE);
         final PackageManager pm = mService.getPackageManager();
-        mRecentTasks = am.getRecentTasks(10, ActivityManager.RECENT_IGNORE_UNAVAILABLE | 0x0004 /*ActivityManager.RECENT_INCLUDE_PROFILES*/);
+        mRecentTasks = am.getRecentTasks(10, 0x0001 /*ActivityManager.RECENT_IGNORE_UNAVAILABLE | 0x0004 ActivityManager.RECENT_INCLUDE_PROFILES*/);
 
         if(mRecentTasks == null || mRecentTasks.isEmpty()) {
             mRecentTasks = new ArrayList<>(0);

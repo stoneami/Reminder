@@ -11,12 +11,12 @@
         android:defaultValue="@bool/open_float_view"/>
 
     <CheckBoxPreference
-        android:key="@string/key_always_show_float_view"
+        android:key="@string/key_show_default_float_view"
         android:title="@string/label_always_show_float_view"
         android:defaultValue="@bool/open_float_view"/>
 
     <CheckBoxPreference
-        android:key="@string/key_auto_open_msg"
+        android:key="@string/key_auto_open_msg_at_home"
         android:title="@string/label_auto_open_msg"
         android:summary="@string/label_auto_open_msg_summary"
         android:defaultValue="@bool/auto_open"/>

@@ -20,10 +20,10 @@
 
     <string name="key_active_listener" translatable="false">key_active_listener</string>
     <string name="key_float_view" translatable="false">key_float_view</string>
-    <string name="key_always_show_float_view" translatable="false">key_always_show_float_view</string>
-    <string name="key_auto_open_msg" translatable="false">key_auto_open_msg</string>
+    <string name="key_show_default_float_view" translatable="false">key_show_default_float_view</string>
+    <string name="key_auto_open_msg_at_home" translatable="false">key_auto_open_msg_at_home</string>
     <string name="key_open_everywhere" translatable="false">key_open_everywhere</string>
     <string name="key_click_vibrator" translatable="false">key_click_vibrator</string>
 
-    <string name="label_always_show_float_view">Always show float window</string>
+    <string name="label_always_show_float_view">Show default float window</string>
 </resources>
