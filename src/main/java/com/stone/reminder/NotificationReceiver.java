@@ -60,6 +60,8 @@ public class NotificationReceiver extends Service {
 
         sPosX = getResources().getInteger(R.integer.float_window_pos_x);
         sPosY = getResources().getInteger(R.integer.float_window_pos_y);
+
+        iniDisplayMetrics();
     }
 
     @Override
@@ -131,6 +133,10 @@ public class NotificationReceiver extends Service {
         mContainer = (LinearLayout)mFloatLayout.findViewById(R.id.container_layout);
 
         mFloatLayout.setService(this);
+    }
+
+    public WindowManager.LayoutParams getParams(){
+        return mWinParams;
     }
 
     public void hideFloatView(){
@@ -208,33 +214,95 @@ public class NotificationReceiver extends Service {
         }
     }
 
-    public void enterDrag(){
-        if(DEBUG) {
-            Log.i(TAG, "enterDrag() +++");
-        }
-    }
-
-    public void quitDrag(){
-        if(DEBUG) {
-            Log.i(TAG, "quitDrag() ---");
-        }
-    }
-
     private void setNormalBgOfFloatView(){
         if(mMessageAmount > 3){
             mContainer.setBackgroundResource(R.drawable.red_background);
-
         }else{
             mContainer.setBackgroundResource(R.drawable.green_background);
         }
     }
 
+    private int mLastX = 0;
+    private int mLastY = 0;
+
     public void handleTouchDownEvent(MotionEvent event){
         setTouchDonwBgOfFloatView();
+
+        mLastX = (int)event.getRawX();
+        mLastY = (int)event.getRawY();
     }
 
     public void handleTouchUpEvent(MotionEvent event){
+        iniDisplayMetrics();
+
         setNormalBgOfFloatView();
+
+        int dx = (int)event.getRawX() - mLastX;
+        int dy = (int)event.getRawY() - mLastY;
+
+        moveFloatView(adjustXPosition(mWinParams.x + dx,DisplayArea.UNCERTAIN), adjustYPosition(mWinParams.y + dy));
+
+        mLastX = 0;
+        mLastY = 0;
+    }
+
+    public void handleTouchMoveEvent(MotionEvent event){
+        int dx = (int)event.getRawX() - mLastX;
+        int dy = (int)event.getRawY() - mLastY;
+
+        moveFloatView(mWinParams.x + dx, mWinParams.y + dy);
+
+        Log.i(TAG, "handleTouchMoveEvent(): mWinParams.x=" + mWinParams.x + " mWinParams.y=" + mWinParams.y + " dx=" + dx + " dy=" + dy);
+
+        mLastX = (int)event.getRawX();
+        mLastY = (int)event.getRawY();
+    }
+
+    private int mWidth = 1080;
+    private int mHeight = 1080;
+    private float mMinHeightRate = 0.3f;
+    private float mMaxHeightRate = 0.6f;
+    private int mMinHeight = 0;
+    private int mMaxHeight = 1080;
+
+    private void iniDisplayMetrics(){
+        mWidth = getResources().getDisplayMetrics().widthPixels;
+        mHeight = getResources().getDisplayMetrics().heightPixels;
+
+        mMinHeight = (int)(mHeight * mMinHeightRate);
+        mMaxHeight = (int)(mHeight * mMaxHeightRate);
+
+        Log.i(TAG, "iniDisplayMetrics(): mWidth=" + mWidth + " mHeight=" + mHeight);
+    }
+
+    private int adjustXPosition(int x, DisplayArea area){
+        int ret = x;
+
+        if(area == DisplayArea.LEFT){
+            ret = 0;
+        }else if(area == DisplayArea.RIGHT){
+            ret = mWidth;
+        }else{
+            if(x - mWidth /2 < 0){//left
+                ret = 0;
+            }else{//right
+                ret = mWidth;
+            }
+        }
+
+        return ret;
+    }
+
+    private int adjustYPosition(int y){
+        int ret = y;
+
+        if(y < mMinHeight){//up
+            ret = mMinHeight;
+        }else if(y > mMaxHeight){//down
+            ret = mMaxHeight;
+        }
+
+        return ret;
     }
 
     private void setTouchDonwBgOfFloatView(){
@@ -242,13 +310,8 @@ public class NotificationReceiver extends Service {
     }
 
     public void moveFloatView(int x, int y){
-        int old_x = mWinParams.x;
-        int old_y = mWinParams.y;
-
-        mWinParams.x = x - sWidth / 2;
-        mWinParams.y = y - sHeight / 2;// - 45;
-
-        Log.i(TAG, "old_x=" + old_x + " old_y=" + old_y + " | new_x=" + mWinParams.x + " new_y=" + mWinParams.y + " | (" + Math.abs(mWinParams.x-old_x) + "," + Math.abs(mWinParams.y-old_y) + ")");
+        mWinParams.x = x;
+        mWinParams.y = y;
 
         mWindowManager.updateViewLayout(mFloatLayout, mWinParams);
     }
@@ -327,6 +390,10 @@ public class NotificationReceiver extends Service {
         }
 
         return false;
+    }
+
+    private static enum DisplayArea{
+        LEFT,RIGHT,UNCERTAIN
     }
 
     //

@@ -2,6 +2,7 @@ package com.stone.reminder;
 
 import android.app.ActivityManager;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
@@ -26,26 +27,9 @@ public class FloatViewRoot extends LinearLayout {
 
     private NotificationReceiver mService;
 
-    private int mWidth = 1080;
-    private int mHeight = 1080;
-    private float mMinHeightRate = 0.3f;
-    private float mMaxHeightRate = 0.7f;
-    private int mMinHeight = 0;
-    private int mMaxHeight = 1080;
-
     private void init(Context context){
         mDetector = new GestureDetector(context, mListener);
         mDetector.setOnDoubleTapListener(mDoubleTapListener);
-
-        iniDisplayMetrics();
-    }
-
-    private void iniDisplayMetrics(){
-        mWidth = getResources().getDisplayMetrics().widthPixels;
-        mHeight = getResources().getDisplayMetrics().heightPixels;
-
-        mMinHeight = (int)(mHeight * mMinHeightRate);
-        mMaxHeight = (int)(mHeight * mMaxHeightRate);
     }
 
     public FloatViewRoot(Context context, AttributeSet attrs) {
@@ -63,79 +47,23 @@ public class FloatViewRoot extends LinearLayout {
         mDetector.onTouchEvent(event);
 
         int action = event.getAction();
+
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 mService.handleTouchDownEvent(event);
                 break;
             case MotionEvent.ACTION_MOVE:
-                handleActionMove((int) event.getRawX(), (int) event.getRawY());
+                mService.handleTouchMoveEvent(event);
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (mLongPress) {
-                    mService.quitDrag();
-                }
-
-                handleActionUp((int) event.getRawX(), (int) event.getRawY());
                 mService.handleTouchUpEvent(event);
-
-                mLongPress = false;
-
                 break;
             default:
                 break;
         }
-
         return false;
-    }
-
-    private void handleActionMove(int x, int y) {
-        move(x, y);
-    }
-
-    private void handleActionUp(int x, int y){
-        iniDisplayMetrics();
-
-        move(adjustXPosition(x, DisplayArea.UNCERTAIN), adjustYPosition(y));
-    }
-
-    private void move(int x, int y){
-        if (DEBUG) Log.i(TAG,"handleActionMove(): (" + x + "," + y + ")");
-
-        if (mLongPress) {
-            mService.moveFloatView(x, y);
-        }
-    }
-
-    private int adjustXPosition(int x, DisplayArea area){
-        int ret = x;
-
-        if(area == DisplayArea.LEFT){
-            ret = 0;
-        }else if(area == DisplayArea.RIGHT){
-            ret = mWidth;
-        }else{
-            if(x - mWidth /2 < 0){//left
-                ret = 0;
-            }else{//right
-                ret = mWidth;
-            }
-        }
-
-        return ret;
-    }
-
-    private int adjustYPosition(int y){
-        int ret = y;
-
-        if(y < mMinHeight){//up
-            ret = mMinHeight;
-        }else if(y > mMaxHeight){//down
-            ret = mMaxHeight;
-        }
-
-        return ret;
     }
 
     private void performHOME(){
@@ -204,8 +132,6 @@ public class FloatViewRoot extends LinearLayout {
 
         @Override
         public void onLongPress(MotionEvent e) {
-            mLongPress = true;
-            mService.enterDrag();
         }
 
         @Override
@@ -247,11 +173,6 @@ public class FloatViewRoot extends LinearLayout {
         }
     }
 
-    private static enum DisplayArea{
-        LEFT,RIGHT,UNCERTAIN
-    }
-
-
     /////////////
     private List<ActivityManager.RecentTaskInfo> mRecentTasks = new ArrayList<>(0);
     private void iniRecentTask() {
@@ -279,9 +200,5 @@ public class FloatViewRoot extends LinearLayout {
 
             Log.i(TAG, i +" : " + mRecentTasks.get(i).baseIntent);
         }
-    }
-
-    private void switchToPreTask(){
-
     }
 }
