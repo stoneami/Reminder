@@ -106,8 +106,6 @@ public class FloatViewRoot extends LinearLayout {
         }
     };
 
-    private boolean mLongPress = false;
-
     private class DefaultGestureListener implements GestureDetector.OnGestureListener {
 
         @Override
@@ -132,6 +130,7 @@ public class FloatViewRoot extends LinearLayout {
 
         @Override
         public void onLongPress(MotionEvent e) {
+            mService.handleLongPressEvent(e);
         }
 
         @Override

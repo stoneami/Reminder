@@ -42,4 +42,9 @@ public class PreferenceUtil {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
         return sp.getBoolean(MainPreferencFragment.KEY_AUTO_OPEN_EVERYWHERE, false);
     }
+
+    public boolean recordOngoingMsg(){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return sp.getBoolean(MainPreferencFragment.KEY_RECORD_ONGOING_MSG, false);
+    }
 }

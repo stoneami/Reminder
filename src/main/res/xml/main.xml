@@ -18,12 +18,15 @@
     <CheckBoxPreference
         android:key="@string/key_auto_open_msg_at_home"
         android:title="@string/label_auto_open_msg"
-        android:summary="@string/label_auto_open_msg_summary"
         android:defaultValue="@bool/auto_open"/>
 
     <CheckBoxPreference
         android:key="@string/key_open_everywhere"
         android:title="@string/label_open_everywhere"
-        android:summary="@string/label_open_everywhere_summary"
         android:defaultValue="@bool/auto_open_everywhere"/>
+
+    <CheckBoxPreference
+        android:key="@string/key_record_ongoing_msg"
+        android:title="@string/label_record_ongoing_msg"
+        android:defaultValue="@bool/record_onging_msg"/>
 </PreferenceScreen>

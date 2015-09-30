@@ -48,6 +48,7 @@ public class NotificationListener extends NotificationListenerService {
     public static final String MSG_REQUEST_PRE_NOTIFICATION = "msg.j.request.pre.notification";
     public static final String MSG_REMOVE_CURRENT_NOTIFICATIONS = "msg.j.remove.current.notification";
     public static final String MSG_LOAD_NOTIFICATIONS = "msg.j.load.notifications";
+    public static final String MSG_RELOAD_NOTIFICATIONS = "msg.j.reload.notifications";
     public static final String MSG_ALWAYS_SHOW_FLOAT_VIEW = "msg.j.always.show.float.view";
 
     public static final String MSG_AUTO_OPEN_MSG = "msg.j.auto.open.message";
@@ -141,7 +142,7 @@ public class NotificationListener extends NotificationListenerService {
 
                     NotificationListenerItem item = mPkgList.get(getItemIndex(mCurPkg));
                     notifyNotificationChanged(item);
-                } else {
+                }  else {
                     mPkgList.clear();
                     notifyNotificationChanged(null);
                 }
@@ -153,6 +154,9 @@ public class NotificationListener extends NotificationListenerService {
                     if (DEBUG) Log.i(TAG, "notifyNotificationChanged(null)");
                     notifyNotificationChanged(null);
                 }
+            }else if(MSG_RELOAD_NOTIFICATIONS.equals(action)){
+                notifyNotificationChanged(null);
+                reloadActiveNotifications();
             }
         }
     };
@@ -172,6 +176,7 @@ public class NotificationListener extends NotificationListenerService {
         filter.addAction(MSG_REMOVE_CURRENT_NOTIFICATIONS);
         filter.addAction(MSG_LOAD_NOTIFICATIONS);
         filter.addAction(MSG_ALWAYS_SHOW_FLOAT_VIEW);
+        filter.addAction(MSG_RELOAD_NOTIFICATIONS);
         registerReceiver(mReceiver, filter);
     }
 
@@ -238,6 +243,11 @@ public class NotificationListener extends NotificationListenerService {
         }
 
         checkIfNeedRemoveNotification(sbn);
+    }
+
+    private void reloadActiveNotifications() {
+        mPkgList.clear();
+        loadActiveNotifications();
     }
 
     private void loadActiveNotifications() {
@@ -313,13 +323,14 @@ public class NotificationListener extends NotificationListenerService {
         boolean flagNoClear = (notice.flags & Notification.FLAG_NO_CLEAR) != 0;
         boolean flagOnGoing = (notice.flags & Notification.FLAG_ONGOING_EVENT) != 0;
         boolean canCancel = !flagNoClear && !flagOnGoing;
+        boolean recOngoingMsg = PreferenceUtil.getInstance(this).recordOngoingMsg();
 
         boolean newPkg = (getItemIndex(sbn.getPackageName()) == -1);
         boolean permittedPkg = !mIgnoredPackage.contains(pkg);
         boolean hasLaunchIntent = hasLaunchIntentForPackage(pkg);
 
         if (DEBUG)
-            Log.i(TAG, "shouldAddPackage(): pkg=" + pkg + " flags=" + notice.flags + " newPkg=" + newPkg + " permittedPkg=" + permittedPkg + " hasLaunchIntent=" + hasLaunchIntent + " pendingIntent=" + pendingIntent);
+            Log.i(TAG, "shouldAddPackage(): pkg=" + pkg + " recOngoingMsg=" +recOngoingMsg + " flags=" + notice.flags + " newPkg=" + newPkg + " permittedPkg=" + permittedPkg + " hasLaunchIntent=" + hasLaunchIntent + " pendingIntent=" + pendingIntent);
 
         /**
          * Conditions:
@@ -328,7 +339,7 @@ public class NotificationListener extends NotificationListenerService {
          * 3.Notification is permitted APP
          * 4.Notification has Pending-Intent or launch-Intent
          */
-        return /*canCancel && */newPkg && permittedPkg && (pendingIntent != null || hasLaunchIntent);
+        return (canCancel || recOngoingMsg) && newPkg && permittedPkg && (pendingIntent != null || hasLaunchIntent);
     }
 
     private boolean hasLaunchIntentForPackage(String pkg) {

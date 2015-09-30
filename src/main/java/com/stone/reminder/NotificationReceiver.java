@@ -167,7 +167,7 @@ public class NotificationReceiver extends Service {
         TextView textView = (TextView)mFloatLayout.findViewById(R.id.amount);
         ImageView imageView = (ImageView)mFloatLayout.findViewById(R.id.icon);
 
-        imageView.setImageDrawable(getDrawable(R.drawable.upper_h));
+        imageView.setImageDrawable(getDrawable(R.drawable.home_icon));
         imageView.setVisibility(View.VISIBLE);
         textView.setVisibility(View.GONE);
     }
@@ -222,6 +222,12 @@ public class NotificationReceiver extends Service {
         }
     }
 
+    private boolean mLongPress = false;
+    public void handleLongPressEvent(MotionEvent event){
+        mLongPress = true;
+        mContainer.setBackgroundResource(R.drawable.red_background);
+    }
+
     private int mLastX = 0;
     private int mLastY = 0;
 
@@ -234,19 +240,24 @@ public class NotificationReceiver extends Service {
 
     public void handleTouchUpEvent(MotionEvent event){
         iniDisplayMetrics();
-
         setNormalBgOfFloatView();
 
-        int dx = (int)event.getRawX() - mLastX;
-        int dy = (int)event.getRawY() - mLastY;
+        if(mLongPress) {
+            int dx = (int) event.getRawX() - mLastX;
+            int dy = (int) event.getRawY() - mLastY;
 
-        moveFloatView(adjustXPosition(mWinParams.x + dx,DisplayArea.UNCERTAIN), adjustYPosition(mWinParams.y + dy));
+            moveFloatView(adjustXPosition(mWinParams.x + dx, DisplayArea.UNCERTAIN), adjustYPosition(mWinParams.y + dy));
 
-        mLastX = 0;
-        mLastY = 0;
+            mLastX = 0;
+            mLastY = 0;
+
+            mLongPress = false;
+        }
     }
 
     public void handleTouchMoveEvent(MotionEvent event){
+        if(!mLongPress) return;
+
         int dx = (int)event.getRawX() - mLastX;
         int dy = (int)event.getRawY() - mLastY;
 
@@ -285,15 +296,16 @@ public class NotificationReceiver extends Service {
 
     private int adjustXPosition(int x, DisplayArea area){
         int ret = x;
+        Log.i(TAG, "adjustXPosition(): mWidth * 3/4=" + (mWidth * 3/4) + " x=" + x);
 
         if(area == DisplayArea.LEFT){
             ret = 0;
         }else if(area == DisplayArea.RIGHT){
-            ret = mWidth;
+            ret = mWidth - mWinParams.width;
         }else{
-            if(x - mWidth /2 < 0){//left
+            if(x - mWidth/4 <= 0){//left
                 ret = 0;
-            }else{//right
+            }else if(x - mWidth * 3/5 >= 0){//right
                 ret = mWidth - mWinParams.width;
             }
         }
@@ -314,7 +326,7 @@ public class NotificationReceiver extends Service {
     }
 
     private void setTouchDonwBgOfFloatView(){
-        mContainer.setBackgroundResource(R.drawable.yellow_background);
+        mContainer.setBackgroundResource(R.drawable.blue_background);
     }
 
     public void moveFloatView(int x, int y){

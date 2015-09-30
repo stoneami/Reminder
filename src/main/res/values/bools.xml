@@ -5,4 +5,5 @@
     <bool name="auto_open">false</bool>
     <bool name="auto_open_everywhere">false</bool>
     <bool name="click_vibrator">false</bool>
+    <bool name="record_onging_msg">true</bool>
 </resources>

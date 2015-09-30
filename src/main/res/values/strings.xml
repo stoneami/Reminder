@@ -24,6 +24,9 @@
     <string name="key_auto_open_msg_at_home" translatable="false">key_auto_open_msg_at_home</string>
     <string name="key_open_everywhere" translatable="false">key_open_everywhere</string>
     <string name="key_click_vibrator" translatable="false">key_click_vibrator</string>
+    
+    <string name="key_record_ongoing_msg" translatable="false">key_ongoing_msg</string>
+    <string name="label_record_ongoing_msg">Record ongoing message</string>
 
     <string name="label_always_show_float_view">Show default float window</string>
 </resources>
