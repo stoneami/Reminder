@@ -250,7 +250,15 @@ public class NotificationReceiver extends Service {
         int dx = (int)event.getRawX() - mLastX;
         int dy = (int)event.getRawY() - mLastY;
 
-        moveFloatView(mWinParams.x + dx, mWinParams.y + dy);
+        int x = mWinParams.x + dx;
+        int y = mWinParams.y + dy;
+        if(x < 0){
+            x=0;
+        }else if(x > mWidth){
+            x=mWidth-mWinParams.width;
+        }
+
+        moveFloatView(x, y);
 
         Log.i(TAG, "handleTouchMoveEvent(): mWinParams.x=" + mWinParams.x + " mWinParams.y=" + mWinParams.y + " dx=" + dx + " dy=" + dy);
 
@@ -286,7 +294,7 @@ public class NotificationReceiver extends Service {
             if(x - mWidth /2 < 0){//left
                 ret = 0;
             }else{//right
-                ret = mWidth;
+                ret = mWidth - mWinParams.width;
             }
         }
 
