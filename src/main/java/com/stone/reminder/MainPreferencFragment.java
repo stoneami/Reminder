@@ -74,7 +74,7 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         Log.i("jerry","onPreferenceChange()");
         if(KEY_FLOAT_VIEW.equals(preference.getKey())){
-            Intent intent = new Intent(getActivity(), NotificationReceiver.class);
+            Intent intent = new Intent(getActivity(), FloatViewManager.class);
             if((Boolean)newValue){
                 Log.i("jerry","KEY_FLOAT_VIEW:true");
                 getActivity().startService(intent);

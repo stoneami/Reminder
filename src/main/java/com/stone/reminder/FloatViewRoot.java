@@ -2,7 +2,6 @@ package com.stone.reminder;
 
 import android.app.ActivityManager;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
@@ -18,16 +17,20 @@ import java.util.List;
 import android.content.pm.PackageManager;
 import android.content.pm.ActivityInfo;
 
+import com.stone.utils.Util;
+
 /**
  * Created by 80048914 on 2015/2/27.
  */
 public class FloatViewRoot extends LinearLayout {
     private static final String TAG = "FloatViewRoot";
     private static final boolean DEBUG = true;
+    private Context mContext;
 
-    private NotificationReceiver mService;
+    private FloatViewManager mFloatViewManager;
 
     private void init(Context context){
+        mContext = context;
         mDetector = new GestureDetector(context, mListener);
         mDetector.setOnDoubleTapListener(mDoubleTapListener);
     }
@@ -50,15 +53,15 @@ public class FloatViewRoot extends LinearLayout {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                mService.handleTouchDownEvent(event);
+                mFloatViewManager.handleTouchDownEvent(event);
                 break;
             case MotionEvent.ACTION_MOVE:
-                mService.handleTouchMoveEvent(event);
+                mFloatViewManager.handleTouchMoveEvent(event);
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_CANCEL:
-                mService.handleTouchUpEvent(event);
+                mFloatViewManager.handleTouchUpEvent(event);
                 break;
             default:
                 break;
@@ -66,15 +69,8 @@ public class FloatViewRoot extends LinearLayout {
         return false;
     }
 
-    private void performHOME(){
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        mService.startActivity(intent);
-    }
-
-    public void setService(NotificationReceiver service) {
-        mService = service;
+    public void setFloatViewManager(FloatViewManager manager) {
+        mFloatViewManager = manager;
     }
 
     private GestureDetector mDetector;
@@ -86,7 +82,7 @@ public class FloatViewRoot extends LinearLayout {
                 Log.i(TAG,"onSingleTapConfirmed()");
             }
 
-            performHOME();
+            Util.getInstance(mContext).performHOME();
             return false;
         }
 
@@ -96,7 +92,7 @@ public class FloatViewRoot extends LinearLayout {
                 Log.i(TAG,"onDoubleTap()");
             }
 
-            mService.launchNotificationPkg();
+            mContext.sendBroadcast(new Intent(NotificationListener.MSG_OPEN_CURRENT_NOTIFICATION));
             return true;
         }
 
@@ -130,7 +126,7 @@ public class FloatViewRoot extends LinearLayout {
 
         @Override
         public void onLongPress(MotionEvent e) {
-            mService.handleLongPressEvent(e);
+            mFloatViewManager.handleLongPressEvent(e);
         }
 
         @Override
@@ -142,28 +138,28 @@ public class FloatViewRoot extends LinearLayout {
             int dY = Math.abs((int) (e2.getY() - e1.getY()));
             int dX = Math.abs((int) (e2.getX() - e1.getX()));
 
-            if(dY - NotificationReceiver.sHeight * 2 / 3 >= 0){
+            if(dY - FloatViewManager.sHeight * 2 / 3 >= 0){
                 if(velocityY > 0){
                     if(DEBUG) {
                         Log.i(TAG, "onFling(): MSG_REQUEST_NEXT_NOTIFICATION");
                     }
 
-                    mService.sendBroadcast(new Intent(NotificationListener.MSG_REQUEST_NEXT_NOTIFICATION));
+                    mContext.sendBroadcast(new Intent(NotificationListener.MSG_REQUEST_NEXT_NOTIFICATION));
                 }else{
                     if(DEBUG) {
                         Log.i(TAG, "onFling(): MSG_REQUEST_PRE_NOTIFICATION");
                     }
 
-                    mService.sendBroadcast(new Intent(NotificationListener.MSG_REQUEST_PRE_NOTIFICATION));
+                    mContext.sendBroadcast(new Intent(NotificationListener.MSG_REQUEST_PRE_NOTIFICATION));
                 }
-            }else  if (dX - NotificationReceiver.sWidth / 2 >= 0) {
+            }else  if (dX - FloatViewManager.sWidth / 2 >= 0) {
                 //Log.i(TAG, " iniRecentTask() " );
                 //iniRecentTask();
                 if(velocityX > 0) {//left to right
-                    //mService.hideFloatView();
-                    //mService.sendBroadcast(new Intent(NotificationListener.MSG_REMOVE_ALL_NOTIFICATIONS));
+                    //mFloatViewManager.hideFloatView();
+                    //mFloatViewManager.sendBroadcast(new Intent(NotificationListener.MSG_REMOVE_ALL_NOTIFICATIONS));
                 }else{//right to left
-                    //mService.sendBroadcast(new Intent(NotificationListener.MSG_REMOVE_CURRENT_NOTIFICATIONS));
+                    //mFloatViewManager.sendBroadcast(new Intent(NotificationListener.MSG_REMOVE_CURRENT_NOTIFICATIONS));
                 }
 
             }
@@ -177,8 +173,8 @@ public class FloatViewRoot extends LinearLayout {
     private void iniRecentTask() {
         mRecentTasks.clear();
 
-        final ActivityManager am = (ActivityManager)mService.getSystemService(Context.ACTIVITY_SERVICE);
-        final PackageManager pm = mService.getPackageManager();
+        final ActivityManager am = (ActivityManager) mFloatViewManager.getSystemService(Context.ACTIVITY_SERVICE);
+        final PackageManager pm = mFloatViewManager.getPackageManager();
         mRecentTasks = am.getRecentTasks(10, 0x0001 /*ActivityManager.RECENT_IGNORE_UNAVAILABLE | 0x0004 ActivityManager.RECENT_INCLUDE_PROFILES*/);
 
         if(mRecentTasks == null || mRecentTasks.isEmpty()) {

@@ -17,6 +17,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.IBinder;
@@ -30,6 +31,7 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 
 import com.stone.utils.PreferenceUtil;
+import com.stone.utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +53,7 @@ public class NotificationListener extends NotificationListenerService {
     public static final String MSG_RELOAD_NOTIFICATIONS = "msg.j.reload.notifications";
     public static final String MSG_ALWAYS_SHOW_FLOAT_VIEW = "msg.j.always.show.float.view";
 
-    public static final String MSG_AUTO_OPEN_MSG = "msg.j.auto.open.message";
+    public static final String MSG_OPEN_CURRENT_NOTIFICATION = "msg.j.open.current.notification";
 
     public static final String PACKAGE = "pkg";
     public static final String PENDING_INTENT = "pending-intent";
@@ -157,6 +159,14 @@ public class NotificationListener extends NotificationListenerService {
             }else if(MSG_RELOAD_NOTIFICATIONS.equals(action)){
                 notifyNotificationChanged(null);
                 reloadActiveNotifications();
+            }else if(MSG_OPEN_CURRENT_NOTIFICATION.equals(action)){
+                // TODO: 2015/10/4
+                if(!mCurPkg.isEmpty()){
+                    int idx = getItemIndex(mCurPkg);
+                    if(idx != -1){
+                        Util.getInstance(NotificationListener.this).launchNotificationPkg(mCurPkg, mPkgList.get(idx).mPendingIntent);
+                    }
+                }
             }
         }
     };
@@ -177,6 +187,7 @@ public class NotificationListener extends NotificationListenerService {
         filter.addAction(MSG_LOAD_NOTIFICATIONS);
         filter.addAction(MSG_ALWAYS_SHOW_FLOAT_VIEW);
         filter.addAction(MSG_RELOAD_NOTIFICATIONS);
+        filter.addAction(MSG_OPEN_CURRENT_NOTIFICATION);
         registerReceiver(mReceiver, filter);
     }
 
@@ -224,9 +235,7 @@ public class NotificationListener extends NotificationListenerService {
         } else {
             if (shouldAutoOpenMsg(sbn)) {
                 if (DEBUG) Log.i(TAG, "auto open message: " + sbn.getPackageName());
-                Intent intent = new Intent(MSG_AUTO_OPEN_MSG);
-                intent.putExtra(PENDING_INTENT, sbn.getNotification().contentIntent);
-                sendBroadcast(intent);
+                Util.getInstance(this).launchNotificationPkg(sbn.getPackageName(), sbn.getNotification().contentIntent);
             } else {
                 checkIfNeedAddNotification(sbn);
             }
@@ -560,4 +569,5 @@ public class NotificationListener extends NotificationListenerService {
         }
     }
 
+    /////////
 }

@@ -15,9 +15,9 @@ public class BootReceiver extends BroadcastReceiver{
 
         if(Intent.ACTION_BOOT_COMPLETED.equals(action)){
             Intent i = new Intent();
-            i.setClass(context, NotificationReceiver.class);
+            i.setClass(context, FloatViewManager.class);
             context.startService(i);
-            Log.i("BootReceiver", "onReceive(): start NotificationListener");
+            Log.i("Reminder", "start service after boot");
         }
     }
 }

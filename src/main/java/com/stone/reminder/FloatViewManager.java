@@ -17,7 +17,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
@@ -36,8 +35,8 @@ import android.widget.TextView;
 
 import com.stone.utils.PreferenceUtil;
 
-public class NotificationReceiver extends Service {
-    private static final String TAG = "NotificationReceiver";
+public class FloatViewManager extends Service {
+    private static final String TAG = "FloatViewManager";
     private static final boolean DEBUG = true;
 
     private FloatViewRoot mFloatLayout;
@@ -45,7 +44,7 @@ public class NotificationReceiver extends Service {
     private WindowManager.LayoutParams mWinParams;
     private WindowManager mWindowManager;
 
-    public NotificationReceiver() {
+    public FloatViewManager() {
     }
 
     @Override
@@ -77,13 +76,12 @@ public class NotificationReceiver extends Service {
 
         IntentFilter myFilter = new IntentFilter(
                 NotificationListener.MSG_NOTIFICATION_CHANGED);
-        myFilter.addAction(NotificationListener.MSG_AUTO_OPEN_MSG);
         registerReceiver(mNotificationChangedReceiver, myFilter);
 
         mShow = false;
         createFloatView();
 
-        if(PreferenceUtil.getInstance(NotificationReceiver.this).permitFloatView()) {
+        if(PreferenceUtil.getInstance(FloatViewManager.this).permitFloatView()) {
             showDefaultFloatView();
         }
     }
@@ -132,11 +130,7 @@ public class NotificationReceiver extends Service {
         mFloatLayout = (FloatViewRoot) LayoutInflater.from(getApplication()).inflate(R.layout.float_layout, null);
         mContainer = (LinearLayout)mFloatLayout.findViewById(R.id.container_layout);
 
-        mFloatLayout.setService(this);
-    }
-
-    public WindowManager.LayoutParams getParams(){
-        return mWinParams;
+        mFloatLayout.setFloatViewManager(this);
     }
 
     public void hideFloatView(){
@@ -337,86 +331,6 @@ public class NotificationReceiver extends Service {
     }
 
     //
-    // launch APP
-    //
-    public boolean hasNotification(){
-        return mNotificationPkg != null && ! mNotificationPkg.isEmpty();
-    }
-
-    private boolean launchNotificationPkg(PendingIntent pendingIntent){
-        if (pendingIntent != null) {
-            try {
-                if(DEBUG) {
-                    Log.v(TAG, "launchNotificationPkg(pendingIntent) -> launch PendingIntent: " + pendingIntent.getCreatorPackage());
-                }
-
-                startIntentSender(pendingIntent.getIntentSender(), null,
-                        Intent.FLAG_ACTIVITY_NEW_TASK,
-                        Intent.FLAG_ACTIVITY_NEW_TASK, 0, null);
-            } catch (IntentSender.SendIntentException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean launchNotificationPkg() {
-        if (hasNotification()) {
-            PendingIntent pendingIntent = mPendingIntent;
-            if (pendingIntent != null) {
-                try {
-                    if(DEBUG) {
-                        Log.i(TAG, "launchNotificationPkg -> launch PendingIntent: " + pendingIntent.getCreatorPackage());
-                    }
-
-                    startIntentSender(pendingIntent.getIntentSender(), null,
-                            Intent.FLAG_ACTIVITY_NEW_TASK,
-                            Intent.FLAG_ACTIVITY_NEW_TASK, 0, null);
-                } catch (IntentSender.SendIntentException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                return true;
-            } else {
-                String pkg = mNotificationPkg;
-
-                if(DEBUG) {
-                    Log.i(TAG, "launchNotificationPkg -> " + pkg);
-                }
-
-                PackageManager pm = getPackageManager();
-                Intent intent = pm.getLaunchIntentForPackage(pkg);
-
-                if (intent != null) {
-                    try {
-                        startActivity(intent);
-                    } catch (android.content.ActivityNotFoundException e0) {
-                        // TODO Auto-generated catch block
-                        e0.printStackTrace();
-                    }
-
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private static enum DisplayArea{
-        LEFT,RIGHT,UNCERTAIN
-    }
-
-    //
     // Receive the notification change event
     //
     private PendingIntent mPendingIntent;
@@ -435,7 +349,7 @@ public class NotificationReceiver extends Service {
                mIcon = intent.getIntExtra(NotificationListener.ICON, -1);
 
                if (mNotificationPkg.isEmpty()) {
-                   if(PreferenceUtil.getInstance(NotificationReceiver.this).showDefaultFloatView()) {
+                   if(PreferenceUtil.getInstance(FloatViewManager.this).showDefaultFloatView()) {
                        if(DEBUG) {
                            Log.i(TAG, "mNotificationChangedReceiver.onReceive(): showDefaultFloatView()");
                        }
@@ -452,10 +366,11 @@ public class NotificationReceiver extends Service {
                    }
                    showFloatView();
                }
-           }else if(NotificationListener.MSG_AUTO_OPEN_MSG.equals(intent.getAction())){
-               launchNotificationPkg((PendingIntent)intent.getParcelableExtra(NotificationListener.PENDING_INTENT));
            }
         }
     };
 
+    private enum DisplayArea{
+        LEFT,RIGHT,UNCERTAIN
+    }
 }
