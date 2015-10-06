@@ -2,6 +2,7 @@ package com.stone.reminder;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 public class MainActivity extends Activity {
@@ -10,9 +11,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        android.util.Log.i("jerry",
-//                "Country: " + getResources().getConfiguration().locale.getCountry() +
-//                " Language: " + getResources().getConfiguration().locale.getLanguage());
 
         getWindow().setBackgroundDrawableResource(R.drawable.background);
 

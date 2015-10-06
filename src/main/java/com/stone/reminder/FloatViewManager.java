@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.IBinder;
@@ -84,6 +85,37 @@ public class FloatViewManager extends Service {
         if(PreferenceUtil.getInstance(FloatViewManager.this).permitFloatView()) {
             showDefaultFloatView();
         }
+    }
+
+    private void reCalculatePos() {
+        int oldHeight = mHeight;
+        int oldWidth = mWidth;
+        int oldX = mWinParams.x;
+        int oldY = mWinParams.y;
+        int oldWinWidth = mWinParams.width;
+
+        iniDisplayMetrics();
+        int x = 0;
+        if(oldX == 0){
+            x = 0;
+        }else if(oldX == oldWidth-oldWinWidth){
+            x = mWidth - mWinParams.width;
+        }else{
+            x = (int)((float)mWidth*oldX/oldWidth);
+        }
+
+        int y = adjustYPosition((int)((float)mHeight*oldY/oldHeight));
+
+        moveFloatView(x,y);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        Log.i(TAG, "onConfigurationChanged()");
+
+        reCalculatePos();
+
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -216,6 +248,9 @@ public class FloatViewManager extends Service {
         }
     }
 
+    //
+    // Handle touch event
+    //
     private boolean mLongPress = false;
     public void handleLongPressEvent(MotionEvent event){
         mLongPress = true;
@@ -233,7 +268,7 @@ public class FloatViewManager extends Service {
     }
 
     public void handleTouchUpEvent(MotionEvent event){
-        iniDisplayMetrics();
+        //iniDisplayMetrics();
         setNormalBgOfFloatView();
 
         if(mLongPress) {
@@ -273,10 +308,15 @@ public class FloatViewManager extends Service {
 
     private int mWidth = 1080;
     private int mHeight = 1080;
-    private float mMinHeightRate = 0.3f;
-    private float mMaxHeightRate = 0.6f;
+    private float mMinHeightRate = 0.2f;
+    private float mMaxHeightRate = 0.7f;
     private int mMinHeight = 0;
     private int mMaxHeight = 1080;
+
+    private float mLeftAreaRate = 0.25f;
+    private float mRightAreaRate = 0.6f;
+    private int mLeftAreaX = (int)(mWidth * mLeftAreaRate);
+    private int mRightAreaX = (int)(mWidth * mRightAreaRate);
 
     private void iniDisplayMetrics(){
         mWidth = getResources().getDisplayMetrics().widthPixels;
@@ -285,21 +325,23 @@ public class FloatViewManager extends Service {
         mMinHeight = (int)(mHeight * mMinHeightRate);
         mMaxHeight = (int)(mHeight * mMaxHeightRate);
 
+        mLeftAreaX = (int)(mWidth * mLeftAreaRate);
+        mRightAreaX = (int)(mWidth * mRightAreaRate);
+
         Log.i(TAG, "iniDisplayMetrics(): mWidth=" + mWidth + " mHeight=" + mHeight);
     }
 
     private int adjustXPosition(int x, DisplayArea area){
         int ret = x;
-        Log.i(TAG, "adjustXPosition(): mWidth * 3/4=" + (mWidth * 3/4) + " x=" + x);
 
         if(area == DisplayArea.LEFT){
             ret = 0;
         }else if(area == DisplayArea.RIGHT){
             ret = mWidth - mWinParams.width;
         }else{
-            if(x - mWidth/4 <= 0){//left
+            if(x - mLeftAreaX <= 0){//left
                 ret = 0;
-            }else if(x - mWidth * 3/5 >= 0){//right
+            }else if(x - mRightAreaX >= 0){//right
                 ret = mWidth - mWinParams.width;
             }
         }
