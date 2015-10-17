@@ -276,21 +276,45 @@ public class NotificationListener extends NotificationListenerService {
         int len = sbns.length;
 
         if (len > 0) {
+            ArrayList<NotificationListenerItem> canClearList = new ArrayList<NotificationListenerItem>();
+            ArrayList<NotificationListenerItem> noClearList = new ArrayList<NotificationListenerItem>();
+
             for (int i = 0; i < len; i++) {
                 StatusBarNotification sbn = sbns[i];
                 if (shouldAddPackage(sbn)) {
                     String pkg = sbn.getPackageName();
                     Notification notice = sbn.getNotification();
                     PendingIntent pendingIntent = notice.contentIntent;
-                    int icon = notice.icon;
-                    int flags = notice.flags;
 
-                    mPkgList.add(new NotificationListenerItem(pkg, flags, pendingIntent, icon));
+                    boolean flagNoClear = (notice.flags & Notification.FLAG_NO_CLEAR) != 0;
+                    boolean flagOnGoing = (notice.flags & Notification.FLAG_ONGOING_EVENT) != 0;
+                    boolean canCancel = !flagNoClear && !flagOnGoing;
+                    if(canCancel) {
+                        canClearList.add(new NotificationListenerItem(pkg, notice.flags, pendingIntent, notice.icon));
+                    }else{
+                        noClearList.add(new NotificationListenerItem(pkg, notice.flags, pendingIntent, notice.icon));
+                    }
+
+                    //mPkgList.add(new NotificationListenerItem(pkg, notice.flags, pendingIntent, notice.icon));
 
                     if (DEBUG)
                         Log.i(TAG, "loadActiveNotifications(): found active notification -> " + pkg);
                 }
             }
+
+            //////the notification can be cleared has higher priority
+            if(!noClearList.isEmpty()) {
+               for(NotificationListenerItem item : noClearList){
+                   mPkgList.add(item);
+               }
+            }
+
+            if(!canClearList.isEmpty()) {
+                for(NotificationListenerItem item : canClearList) {
+                    mPkgList.add(item);
+                }
+            }
+            //////
 
             if (mPkgList.size() > 0) {
                 int index = findHighPriorityItem();

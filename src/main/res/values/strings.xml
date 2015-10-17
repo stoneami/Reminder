@@ -16,6 +16,9 @@
     <string name="label_click_vibrator">单击振动</string>
     <string name="label_click_vibrator_summary">单击悬浮窗时有振动效果</string>
 
+    <string name="label_open_everywhere">Open message everywhere</string>
+    <string name="label_open_everywhere_summary"></string>
+
     <string name="instruction">\'Notification Reminder\' will show APP notifications in a float window.\nFuctions：\n（1）single click: open notification\n（2）fling up and down: switch app\n（3）fling to left：clear current notifications\n(4)fling to right: clear all notifications</string>
 
     <string name="key_active_listener" translatable="false">key_active_listener</string>

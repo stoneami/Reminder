@@ -46,6 +46,6 @@ public class PreferenceUtil {
 
     public boolean recordOngoingMsg(){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
-        return sp.getBoolean(MainPreferencFragment.KEY_RECORD_ONGOING_MSG, false);
+        return sp.getBoolean(MainPreferencFragment.KEY_RECORD_ONGOING_MSG, true);
     }
 }
