@@ -289,32 +289,26 @@ public class NotificationListener extends NotificationListenerService {
                     boolean flagNoClear = (notice.flags & Notification.FLAG_NO_CLEAR) != 0;
                     boolean flagOnGoing = (notice.flags & Notification.FLAG_ONGOING_EVENT) != 0;
                     boolean canCancel = !flagNoClear && !flagOnGoing;
-                    if(canCancel) {
-                        canClearList.add(new NotificationListenerItem(pkg, notice.flags, pendingIntent, notice.icon));
-                    }else{
-                        noClearList.add(new NotificationListenerItem(pkg, notice.flags, pendingIntent, notice.icon));
-                    }
 
-                    //mPkgList.add(new NotificationListenerItem(pkg, notice.flags, pendingIntent, notice.icon));
+                    if (mPkgList.size() > 0) {
+                        if (canCancel) {
+                            mPkgList.add(new NotificationListenerItem(pkg, notice.flags, pendingIntent, notice.icon));
+                        } else {
+                            ArrayList<NotificationListenerItem> temp = mPkgList;
+                            mPkgList = new ArrayList<>(temp.size() + 1);
+                            mPkgList.add(new NotificationListenerItem(pkg, notice.flags, pendingIntent, notice.icon));
+                            for (NotificationListenerItem t : temp) {
+                                mPkgList.add(t);
+                            }
+                        }
+                    } else {
+                        mPkgList.add(new NotificationListenerItem(pkg, notice.flags, pendingIntent, notice.icon));
+                    }
 
                     if (DEBUG)
                         Log.i(TAG, "loadActiveNotifications(): found active notification -> " + pkg);
                 }
             }
-
-            //////the notification can be cleared has higher priority
-            if(!noClearList.isEmpty()) {
-               for(NotificationListenerItem item : noClearList){
-                   mPkgList.add(item);
-               }
-            }
-
-            if(!canClearList.isEmpty()) {
-                for(NotificationListenerItem item : canClearList) {
-                    mPkgList.add(item);
-                }
-            }
-            //////
 
             if (mPkgList.size() > 0) {
                 int index = findHighPriorityItem();
@@ -358,12 +352,14 @@ public class NotificationListener extends NotificationListenerService {
         boolean canCancel = !flagNoClear && !flagOnGoing;
         boolean recOngoingMsg = PreferenceUtil.getInstance(this).recordOngoingMsg();
 
-        boolean newPkg = (getItemIndex(sbn.getPackageName()) == -1);
+        boolean newPkg = (getItemIndex(pkg) == -1);
         boolean permittedPkg = !mIgnoredPackage.contains(pkg);
         boolean hasLaunchIntent = hasLaunchIntentForPackage(pkg);
 
-        if (DEBUG)
-            Log.i(TAG, "shouldAddPackage(): pkg=" + pkg + " recOngoingMsg=" +recOngoingMsg + " flags=" + notice.flags + " newPkg=" + newPkg + " permittedPkg=" + permittedPkg + " hasLaunchIntent=" + hasLaunchIntent + " pendingIntent=" + pendingIntent);
+        if (DEBUG) {
+            boolean allowed = (canCancel || recOngoingMsg) && newPkg && permittedPkg && (pendingIntent != null || hasLaunchIntent);
+            Log.i(TAG, "shouldAddPackage(): " + allowed + " pkg=" + pkg + " recOngoingMsg=" + recOngoingMsg + " flags=" + notice.flags + " newPkg=" + newPkg + " permittedPkg=" + permittedPkg + " hasLaunchIntent=" + hasLaunchIntent + " pendingIntent=" + pendingIntent);
+        }
 
         /**
          * Conditions:
