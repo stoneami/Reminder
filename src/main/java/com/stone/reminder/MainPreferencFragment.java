@@ -52,6 +52,9 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
         mPreferenceAutoOpenMsg.setOnPreferenceChangeListener(this);
         mPreferenceOpenEverywhere.setOnPreferenceChangeListener(this);
         mpPreferenceRecordOngoingMsg.setOnPreferenceChangeListener(this);
+
+        //remove this preference temporarily
+        ((PreferenceScreen)findPreference("root_screen")).removePreference(mPreferenceAutoOpenMsg);
     }
 
     @Override
