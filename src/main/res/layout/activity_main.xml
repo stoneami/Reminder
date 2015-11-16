@@ -75,7 +75,7 @@
             android:layout_marginStart="150dp"
             android:layout_marginEnd="5dp"
             android:layout_alignParentEnd="true"
-            android:checked="@bool/open_float_view"
+            android:checked="@bool/default_open_float_view"
             />
         <!-- Row 2-->
         <TextView
@@ -98,7 +98,7 @@
             android:layout_alignTop="@id/tv_auto_open"
             android:layout_marginEnd="5dp"
             android:layout_alignStart="@id/cb_floatview"
-            android:checked="@bool/auto_open"
+            android:checked="@bool/default_auto_open"
             />
     </RelativeLayout>
 </RelativeLayout>

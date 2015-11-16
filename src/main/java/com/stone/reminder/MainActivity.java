@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
+import com.stone.utils.Util;
+
 public class MainActivity extends Activity {
     private MainPreferencFragment mPreferenceFragment;
 

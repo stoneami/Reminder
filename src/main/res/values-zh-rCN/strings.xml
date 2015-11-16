@@ -25,4 +25,6 @@
     <string name="label_always_show_float_view">显示默认悬浮窗</string>
 
     <string name="label_record_ongoing_msg">关注持久消息</string>
+
+    <string name="label_smart_open_app">智能打开应用</string>
 </resources>

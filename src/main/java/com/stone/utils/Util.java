@@ -7,6 +7,11 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import com.stone.database.DBManager;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by stoneami on 2015/10/3.
  */
@@ -73,5 +78,10 @@ public class Util {
         }
 
         return false;
+    }
+
+    public String getCurrentDatetime(){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return formatter.format(new Date(System.currentTimeMillis()));
     }
 }

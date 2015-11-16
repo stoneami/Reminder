@@ -48,4 +48,9 @@ public class PreferenceUtil {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
         return sp.getBoolean(MainPreferencFragment.KEY_RECORD_ONGOING_MSG, true);
     }
+
+    public boolean smartOpenApp(){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return sp.getBoolean(MainPreferencFragment.KEY_SMART_OPEN_APP, true);
+    }
 }

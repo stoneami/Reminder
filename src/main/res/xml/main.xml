@@ -9,25 +9,30 @@
         android:key="@string/key_float_view"
         android:title="@string/label_permmit_float"
         android:summary="@string/label_permmit_float_summary"
-        android:defaultValue="@bool/open_float_view"/>
+        android:defaultValue="@bool/default_open_float_view"/>
 
     <CheckBoxPreference
         android:key="@string/key_show_default_float_view"
         android:title="@string/label_always_show_float_view"
-        android:defaultValue="@bool/open_float_view"/>
+        android:defaultValue="@bool/default_open_float_view"/>
 
     <CheckBoxPreference
         android:key="@string/key_auto_open_msg_at_home"
         android:title="@string/label_auto_open_msg"
-        android:defaultValue="@bool/auto_open"/>
+        android:defaultValue="@bool/default_auto_open"/>
 
     <CheckBoxPreference
         android:key="@string/key_open_everywhere"
         android:title="@string/label_open_everywhere"
-        android:defaultValue="@bool/auto_open_everywhere"/>
+        android:defaultValue="@bool/default_auto_open_everywhere"/>
 
     <CheckBoxPreference
         android:key="@string/key_record_ongoing_msg"
         android:title="@string/label_record_ongoing_msg"
-        android:defaultValue="@bool/record_onging_msg"/>
+        android:defaultValue="@bool/default_record_onging_msg"/>
+
+    <CheckBoxPreference
+        android:key="@string/key_smart_open_app"
+        android:title="@string/label_smart_open_app"
+        android:defaultValue="@bool/default_record_onging_msg"/>
 </PreferenceScreen>

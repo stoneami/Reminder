@@ -30,6 +30,7 @@ import android.content.pm.ResolveInfo;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 
+import com.stone.database.DBManager;
 import com.stone.utils.PreferenceUtil;
 import com.stone.utils.Util;
 
@@ -165,6 +166,12 @@ public class NotificationListener extends NotificationListenerService {
                     int idx = getItemIndex(mCurPkg);
                     if(idx != -1){
                         Util.getInstance(NotificationListener.this).launchNotificationPkg(mCurPkg, mPkgList.get(idx).mPendingIntent);
+
+                        String datetime = Util.getInstance(NotificationListener.this).getCurrentDatetime();
+                        Log.i(TAG,"package: " + mCurPkg + " datetime: " + datetime);
+                        DBManager.getInstance(NotificationListener.this).insert(mCurPkg, datetime);
+
+                        //String pkg = DBManager.getInstance(NotificationListener.this).getMostPopularApp(2);
                     }
                 }
             }
@@ -233,7 +240,7 @@ public class NotificationListener extends NotificationListenerService {
             loadActiveNotifications();
             mFirstTimeAfterBind = false;
         } else {
-            if (shouldAutoOpenMsg(sbn)) {
+            if (shouldAutoOpenMsg(sbn) && shouldAddPackage(sbn)) {
                 if (DEBUG) Log.i(TAG, "auto open message: " + sbn.getPackageName());
                 Util.getInstance(this).launchNotificationPkg(sbn.getPackageName(), sbn.getNotification().contentIntent);
             } else {
@@ -543,7 +550,7 @@ public class NotificationListener extends NotificationListenerService {
 
         boolean hasPendingIntent = (sbn.getNotification().contentIntent != null);
 
-        return permit && hasPendingIntent && (openEverywhere || (openAtHOME && atLauncher()));
+        return permit && hasPendingIntent && ((openEverywhere && !myselfOnTop()) || (openAtHOME && atLauncher()));
     }
 
     private List<String> getLaunchers() {
@@ -557,6 +564,20 @@ public class NotificationListener extends NotificationListenerService {
         }
 
         return launchers;
+    }
+
+    private boolean myselfOnTop() {
+        long start = System.currentTimeMillis();
+        boolean ret = false;
+
+        List<RunningTaskInfo> top = mActivityManager.getRunningTasks(1);
+        if (top != null && top.size() > 0) {
+            if (getApplicationInfo().packageName.equals(top.get(0).topActivity.getPackageName())) {
+                ret = true;
+            }
+        }
+
+        return ret;
     }
 
     private boolean atLauncher() {
@@ -588,6 +609,5 @@ public class NotificationListener extends NotificationListenerService {
             mIcon = icon;
         }
     }
-
     /////////
 }

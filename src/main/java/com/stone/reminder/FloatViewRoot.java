@@ -167,33 +167,4 @@ public class FloatViewRoot extends LinearLayout {
             return true;
         }
     }
-
-    /////////////
-    private List<ActivityManager.RecentTaskInfo> mRecentTasks = new ArrayList<>(0);
-    private void iniRecentTask() {
-        mRecentTasks.clear();
-
-        final ActivityManager am = (ActivityManager) mFloatViewManager.getSystemService(Context.ACTIVITY_SERVICE);
-        final PackageManager pm = mFloatViewManager.getPackageManager();
-        mRecentTasks = am.getRecentTasks(10, 0x0001 /*ActivityManager.RECENT_IGNORE_UNAVAILABLE | 0x0004 ActivityManager.RECENT_INCLUDE_PROFILES*/);
-
-        if(mRecentTasks == null || mRecentTasks.isEmpty()) {
-            mRecentTasks = new ArrayList<>(0);
-            Log.i(TAG, " NOTHING FOUND ??? " );
-            return;
-        }
-
-        ActivityInfo homeInfo = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
-                .resolveActivityInfo(pm, 0);
-
-        Log.i(TAG, "size=" + mRecentTasks.size());
-        for(int i=0; i<mRecentTasks.size(); i++ ){
-            if(homeInfo.packageName.equals(mRecentTasks.get(i).baseIntent.getPackage())) {
-                //mRecentTasks.remove(i);
-                //break;
-            }
-
-            Log.i(TAG, i +" : " + mRecentTasks.get(i).baseIntent);
-        }
-    }
 }

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <bool name="open_float_view">true</bool>
-    <bool name="always_show_float_view">true</bool>
-    <bool name="auto_open">false</bool>
-    <bool name="auto_open_everywhere">false</bool>
-    <bool name="click_vibrator">false</bool>
-    <bool name="record_onging_msg">true</bool>
+    <bool name="default_open_float_view">true</bool>
+    <bool name="default_always_show_float_view">true</bool>
+    <bool name="default_auto_open">false</bool>
+    <bool name="default_auto_open_everywhere">false</bool>
+    <bool name="default_click_vibrator">false</bool>
+    <bool name="default_record_onging_msg">true</bool>
+    <bool name="default_smart_open_msg">true</bool>
 </resources>

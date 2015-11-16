@@ -32,4 +32,8 @@
     <string name="label_record_ongoing_msg">Record ongoing message</string>
 
     <string name="label_always_show_float_view">Show default float window</string>
+
+    <string name="label_smart_open_app">智能打开应用</string>
+    <string name="key_smart_open_app"> translatable="false">key_smart_open_app</string>
+
 </resources>

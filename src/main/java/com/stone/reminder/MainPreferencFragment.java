@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 import android.util.Log;
 
 /**
@@ -16,6 +17,7 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
     public static String KEY_AUTO_OPEN_MSG_ONLY_AT_HOME;
     public static String KEY_AUTO_OPEN_EVERYWHERE;
     public static String KEY_RECORD_ONGOING_MSG;
+    public static String KEY_SMART_OPEN_APP;
 
     private Preference mPreferenceActiveListener;
     private Preference mPreferenceFloatView;
@@ -23,6 +25,7 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
     private Preference mPreferenceAutoOpenMsg;
     private Preference mPreferenceOpenEverywhere;
     private Preference mpPreferenceRecordOngoingMsg;
+    private Preference mPreferenceSmartOpenApp;
 
     private void init(){
         KEY_ACTIVE_LISTENER = getString(R.string.key_active_listener);
@@ -31,6 +34,7 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
         KEY_AUTO_OPEN_MSG_ONLY_AT_HOME = getString(R.string.key_auto_open_msg_at_home);
         KEY_AUTO_OPEN_EVERYWHERE = getString(R.string.key_open_everywhere);
         KEY_RECORD_ONGOING_MSG = getString(R.string.key_record_ongoing_msg);
+        KEY_SMART_OPEN_APP = getString(R.string.key_smart_open_app);
 
         mPreferenceActiveListener = findPreference(KEY_ACTIVE_LISTENER);
         mPreferenceFloatView = findPreference(KEY_FLOAT_VIEW);
@@ -38,6 +42,7 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
         mPreferenceAutoOpenMsg = findPreference(KEY_AUTO_OPEN_MSG_ONLY_AT_HOME);
         mPreferenceOpenEverywhere = findPreference(KEY_AUTO_OPEN_EVERYWHERE);
         mpPreferenceRecordOngoingMsg = findPreference(KEY_RECORD_ONGOING_MSG);
+        mPreferenceSmartOpenApp = findPreference(KEY_SMART_OPEN_APP);
 
         mPreferenceActiveListener.setOnPreferenceClickListener(this);
         mPreferenceFloatView.setOnPreferenceClickListener(this);
@@ -45,6 +50,7 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
         mPreferenceAutoOpenMsg.setOnPreferenceClickListener(this);
         mPreferenceOpenEverywhere.setOnPreferenceClickListener(this);
         mpPreferenceRecordOngoingMsg.setOnPreferenceClickListener(this);
+        mPreferenceSmartOpenApp.setOnPreferenceClickListener(this);
 
         mPreferenceActiveListener.setOnPreferenceChangeListener(this);
         mPreferenceFloatView.setOnPreferenceChangeListener(this);
@@ -52,7 +58,7 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
         mPreferenceAutoOpenMsg.setOnPreferenceChangeListener(this);
         mPreferenceOpenEverywhere.setOnPreferenceChangeListener(this);
         mpPreferenceRecordOngoingMsg.setOnPreferenceChangeListener(this);
-
+        mPreferenceSmartOpenApp.setOnPreferenceChangeListener(this);
         //remove this preference temporarily
         ((PreferenceScreen)findPreference("root_screen")).removePreference(mPreferenceAutoOpenMsg);
     }
