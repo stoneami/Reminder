@@ -170,8 +170,13 @@ public class NotificationListener extends NotificationListenerService {
                         String datetime = Util.getInstance(NotificationListener.this).getCurrentDatetime();
                         Log.i(TAG,"package: " + mCurPkg + " datetime: " + datetime);
                         DBManager.getInstance(NotificationListener.this).insert(mCurPkg, datetime);
-
-                        //String pkg = DBManager.getInstance(NotificationListener.this).getMostPopularApp(2);
+                    }
+                }else{
+                    if(PreferenceUtil.getInstance(NotificationListener.this).smartOpenApp()) {
+                        String pkg = DBManager.getInstance(NotificationListener.this).getMostPopularApp(6);
+                        if (pkg != null) {
+                            Util.getInstance(NotificationListener.this).launchNotificationPkg(pkg, null);
+                        }
                     }
                 }
             }
