@@ -56,6 +56,8 @@ public class NotificationListener extends NotificationListenerService {
 
     public static final String MSG_OPEN_CURRENT_NOTIFICATION = "msg.j.open.current.notification";
 
+    public static final String MSG_DISPLAY_OFTEN_OPEN_ICON = "msg.j.display.often.open.icon";
+
     public static final String PACKAGE = "pkg";
     public static final String PENDING_INTENT = "pending-intent";
     public static final String AMOUNT = "message-amount";
@@ -151,8 +153,7 @@ public class NotificationListener extends NotificationListenerService {
                 }
             } else if (MSG_LOAD_NOTIFICATIONS.equals(action)) {
                 asyncLoadActiveNotification();
-            } else if (MSG_ALWAYS_SHOW_FLOAT_VIEW.equals(action)) {
-                if (DEBUG) Log.i(TAG, "MSG_ALWAYS_SHOW_FLOAT_VIEW");
+            } else if (MSG_ALWAYS_SHOW_FLOAT_VIEW.equals(action) || MSG_DISPLAY_OFTEN_OPEN_ICON.equals(action)) {
                 if (mPkgList.isEmpty()) {
                     if (DEBUG) Log.i(TAG, "notifyNotificationChanged(null)");
                     notifyNotificationChanged(null);
@@ -173,8 +174,8 @@ public class NotificationListener extends NotificationListenerService {
                     }
                 }else{
                     if(PreferenceUtil.getInstance(NotificationListener.this).smartOpenApp()) {
-                        String pkg = DBManager.getInstance(NotificationListener.this).getMostPopularApp(6);
-                        if (pkg != null) {
+                        String pkg = DBManager.getInstance(NotificationListener.this).getMostPopularApp(24);
+                        if (!pkg.isEmpty()) {
                             Util.getInstance(NotificationListener.this).launchNotificationPkg(pkg, null);
                         }
                     }
@@ -200,6 +201,7 @@ public class NotificationListener extends NotificationListenerService {
         filter.addAction(MSG_ALWAYS_SHOW_FLOAT_VIEW);
         filter.addAction(MSG_RELOAD_NOTIFICATIONS);
         filter.addAction(MSG_OPEN_CURRENT_NOTIFICATION);
+        filter.addAction(MSG_DISPLAY_OFTEN_OPEN_ICON);
         registerReceiver(mReceiver, filter);
     }
 

@@ -37,7 +37,7 @@ public class DBManager {
     }
 
     public String getMostPopularApp(int dur) {
-        String pkg = null;
+        String pkg = "";
 
         SQLiteDatabase db = mHelper.getWritableDatabase();
 

@@ -35,4 +35,9 @@
         android:key="@string/key_smart_open_app"
         android:title="@string/label_smart_open_app"
         android:defaultValue="@bool/default_record_onging_msg"/>
+
+    <CheckBoxPreference
+        android:key="@string/key_display_often_open_icon"
+        android:title="@string/label_display_often_open_icon"
+        android:defaultValue="@bool/default_display_often_open_icon"/>
 </PreferenceScreen>

@@ -53,4 +53,9 @@ public class PreferenceUtil {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
         return sp.getBoolean(MainPreferencFragment.KEY_SMART_OPEN_APP, true);
     }
+
+    public boolean displayOftenOpenIcon(){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return sp.getBoolean(MainPreferencFragment.KEY_DISPLAY_OFTEN_OPEN_ICON, true);
+    }
 }

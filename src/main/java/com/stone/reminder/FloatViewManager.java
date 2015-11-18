@@ -19,7 +19,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 
@@ -34,7 +36,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.stone.database.DBManager;
 import com.stone.utils.PreferenceUtil;
+import com.stone.utils.Util;
 
 public class FloatViewManager extends Service {
     private static final String TAG = "FloatViewManager";
@@ -193,9 +197,33 @@ public class FloatViewManager extends Service {
         TextView textView = (TextView)mFloatLayout.findViewById(R.id.amount);
         ImageView imageView = (ImageView)mFloatLayout.findViewById(R.id.icon);
 
-        imageView.setImageDrawable(getDrawable(R.drawable.home_icon));
+        String pkg = "";
+        if(PreferenceUtil.getInstance(this).displayOftenOpenIcon()) {
+            pkg = DBManager.getInstance(this).getMostPopularApp(24);
+        }
+
+        if(!pkg.isEmpty()){
+            imageView.setImageDrawable(getAppIcon(pkg));
+        }else{
+            imageView.setImageDrawable(getDrawable(R.drawable.home_icon));
+        }
+
         imageView.setVisibility(View.VISIBLE);
         textView.setVisibility(View.GONE);
+    }
+
+    private Drawable getAppIcon(String pkg){
+        PackageManager pm = getPackageManager();
+        Intent intent = pm.getLaunchIntentForPackage(pkg);
+        Drawable icon;
+        try {
+            icon = pm.getActivityIcon(intent);
+        } catch (PackageManager.NameNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+        return icon;//((BitmapDrawable)icon).getBitmap();
     }
 
     public void showFloatView(){

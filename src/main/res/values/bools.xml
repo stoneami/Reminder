@@ -7,4 +7,5 @@
     <bool name="default_click_vibrator">false</bool>
     <bool name="default_record_onging_msg">true</bool>
     <bool name="default_smart_open_msg">true</bool>
+    <bool name="default_display_often_open_icon">true</bool>
 </resources>

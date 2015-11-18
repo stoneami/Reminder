@@ -33,7 +33,11 @@
 
     <string name="label_always_show_float_view">Show default float window</string>
 
-    <string name="label_smart_open_app">智能打开应用</string>
+    <string name="label_smart_open_app">Open common app</string>
     <string name="key_smart_open_app"> translatable="false">key_smart_open_app</string>
+
+    <string name="label_display_often_open_icon">显示常用应用图标</string>
+    <string name="key_display_often_open_icon" translatable="false">key_display_often_open_icon</string>
+    <string name="label_display_often_open_icon_summary">没有通知消息时，悬浮窗将显示常用应用图标</string>
 
 </resources>
