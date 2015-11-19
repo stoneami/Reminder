@@ -1,43 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Notification Reminder</string>
-    <string name="start_service">Enable Float</string>
-    <string name="stop_service">Disenable Float</string>
-    <string name="enable_listener">Activate Notification Listener</string>
+    <string name="label">Notification Listener</string>
+    <string name="instruction">\'Notification Reminder\' will show APP notifications in a float window.\nFunctions：\n（1）single click: open notification\n（2）fling up and down: switch app\n（3）fling to left：clear current notifications\n(4)fling to right: clear all notifications</string>
 
     <string name="label_permmit_float">Allow float view</string>
     <string name="label_permmit_float_summary"></string>
 
-    <string name="label">Notification Listener</string>
-
     <string name="label_auto_open_msg">Automatic open message</string>
     <string name="label_auto_open_msg_summary"></string>
 
-    <string name="label_click_vibrator">单击振动</string>
-    <string name="label_click_vibrator_summary">单击悬浮窗时有振动效果</string>
+    <string name="label_enable_listener">Activate Notification Listener</string>
+    <string name="label_enable_listener_summary">激活服务后才能正常使用所有功能</string>
 
     <string name="label_open_everywhere">Open message everywhere</string>
     <string name="label_open_everywhere_summary"></string>
 
-    <string name="instruction">\'Notification Reminder\' will show APP notifications in a float window.\nFuctions：\n（1）single click: open notification\n（2）fling up and down: switch app\n（3）fling to left：clear current notifications\n(4)fling to right: clear all notifications</string>
+    <string name="label_record_ongoing_msg">Record ongoing message</string>
+    <string name="label_record_ongoing_msg_summary">统计常驻状态栏的消息</string>
 
+    <string name="label_always_show_float_view">Show default float window</string>
+    <string name="label_always_show_float_view_summary">没有通知消息时，将显示默认悬浮窗</string>
+
+    <string name="label_smart_open_app">Open common app</string>
+    <string name="label_smart_open_app_summary">分析出过去一段时间内最常使用的应用，双击默认悬浮窗即可打开应用</string>
+
+    <string name="label_display_often_open_icon">显示常用应用图标</string>
+    <string name="label_display_often_open_icon_summary">最常使用应用的图标将显示在默认悬浮窗中</string>
+
+    <!-- Keys -->
     <string name="key_active_listener" translatable="false">key_active_listener</string>
     <string name="key_float_view" translatable="false">key_float_view</string>
     <string name="key_show_default_float_view" translatable="false">key_show_default_float_view</string>
     <string name="key_auto_open_msg_at_home" translatable="false">key_auto_open_msg_at_home</string>
     <string name="key_open_everywhere" translatable="false">key_open_everywhere</string>
     <string name="key_click_vibrator" translatable="false">key_click_vibrator</string>
-    
     <string name="key_record_ongoing_msg" translatable="false">key_ongoing_msg</string>
-    <string name="label_record_ongoing_msg">Record ongoing message</string>
-
-    <string name="label_always_show_float_view">Show default float window</string>
-
-    <string name="label_smart_open_app">Open common app</string>
     <string name="key_smart_open_app"> translatable="false">key_smart_open_app</string>
-
-    <string name="label_display_often_open_icon">显示常用应用图标</string>
     <string name="key_display_often_open_icon" translatable="false">key_display_often_open_icon</string>
-    <string name="label_display_often_open_icon_summary">没有通知消息时，悬浮窗将显示常用应用图标</string>
 
 </resources>

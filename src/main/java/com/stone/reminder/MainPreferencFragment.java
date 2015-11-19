@@ -92,10 +92,12 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
             Intent intent = new Intent(getActivity(), FloatViewManager.class);
             if((Boolean)newValue){
                 Log.i("jerry","KEY_FLOAT_VIEW:true");
+                mPreferenceAlwaysShowFloatView.setEnabled(true);
                 getActivity().startService(intent);
                 getActivity().sendBroadcast(new Intent(NotificationListener.MSG_LOAD_NOTIFICATIONS));
             }else {
                 Log.i("jerry","KEY_FLOAT_VIEW:false");
+                mPreferenceAlwaysShowFloatView.setEnabled(false);
                 getActivity().stopService(intent);
             }
         }else if(KEY_SHOW_DEFAULT_FLOAT_VIEW.equals(preference.getKey())){
@@ -107,6 +109,12 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
         }else if(KEY_DISPLAY_OFTEN_OPEN_ICON.equals(preference.getKey())){
             Intent intent = new Intent(NotificationListener.MSG_DISPLAY_OFTEN_OPEN_ICON);
             getActivity().sendBroadcast(intent);
+        }else if(KEY_SMART_OPEN_APP.equals(preference.getKey())){
+            if((Boolean)newValue){
+                mPreferenceDisplayOftenOpenIcon.setEnabled(true);
+            }else {
+                mPreferenceDisplayOftenOpenIcon.setEnabled(false);
+            }
         }
 
         return true;

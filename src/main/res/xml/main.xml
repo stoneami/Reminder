@@ -3,7 +3,8 @@
     android:key="root_screen">
     <Preference
         android:key="@string/key_active_listener"
-        android:title="@string/enable_listener" />
+        android:title="@string/label_enable_listener"
+        android:summary="@string/label_enable_listener_summary"/>
 
     <CheckBoxPreference
         android:key="@string/key_float_view"
@@ -14,6 +15,7 @@
     <CheckBoxPreference
         android:key="@string/key_show_default_float_view"
         android:title="@string/label_always_show_float_view"
+        android:summary="@string/label_always_show_float_view_summary"
         android:defaultValue="@bool/default_open_float_view"/>
 
     <CheckBoxPreference
@@ -24,20 +26,24 @@
     <CheckBoxPreference
         android:key="@string/key_open_everywhere"
         android:title="@string/label_open_everywhere"
+        android:summary="@string/label_open_everywhere_summary"
         android:defaultValue="@bool/default_auto_open_everywhere"/>
 
     <CheckBoxPreference
         android:key="@string/key_record_ongoing_msg"
         android:title="@string/label_record_ongoing_msg"
+        android:summary="@string/label_record_ongoing_msg_summary"
         android:defaultValue="@bool/default_record_onging_msg"/>
 
     <CheckBoxPreference
         android:key="@string/key_smart_open_app"
         android:title="@string/label_smart_open_app"
-        android:defaultValue="@bool/default_record_onging_msg"/>
+        android:summary="@string/label_smart_open_app_summary"
+        android:defaultValue="@bool/default_smart_open_msg"/>
 
     <CheckBoxPreference
         android:key="@string/key_display_often_open_icon"
         android:title="@string/label_display_often_open_icon"
+        android:summary="@string/label_display_often_open_icon_summary"
         android:defaultValue="@bool/default_display_often_open_icon"/>
 </PreferenceScreen>
