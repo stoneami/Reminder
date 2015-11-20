@@ -5,10 +5,14 @@ package com.stone.database;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.stone.reminder.NotificationListener;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -37,7 +41,8 @@ public class DBManager {
 
     private ArrayList<StatisticsItem> mStatisticsList = new ArrayList<>(10);
 
-    public void loadData(){
+    private boolean mReady = false;
+    public void asyncLoadData(){
         new Thread(){
             @Override
             public void run() {
@@ -53,11 +58,18 @@ public class DBManager {
                 while (cursor.moveToNext()) {
                     String pkg = cursor.getString(cursor.getColumnIndex(AppRecord.PACKAGE_NAME));
                     int count = cursor.getInt(cursor.getColumnIndex("total"));
-                    Log.i(TAG, "loadData(): pkg=" + pkg + ", count=" + count);
+                    Log.i(TAG, "asyncLoadData(): pkg=" + pkg + ", count=" + count);
                     mStatisticsList.add(new StatisticsItem(pkg, count));
                 }
 
+                //ready to show often-open app
+                if(cursor.getCount() > 0){
+                    mContext.sendBroadcast(new Intent(NotificationListener.MSG_DISPLAY_OFTEN_OPEN_ICON));
+                }
+
                 cursor.close();
+
+                mReady = true;
             }
         }.run();
     }
@@ -72,11 +84,64 @@ public class DBManager {
         }
     }
 
-    public void insert(String pkg, String datetime) {
+    public void asyncInsert(final String pkg, final String datetime){
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                int n = mStatisticsList.size();
+                int i = 0;
+                for(;i<n;i++){
+                    if(mStatisticsList.get(i).pkg.equals(pkg)){
+                        ++ mStatisticsList.get(i).count;
+                        break;
+                    }
+                }
+
+                if(n == 0 || i == n){
+                    mStatisticsList.add(new StatisticsItem(pkg,1));
+                }
+
+                sort(mStatisticsList);
+
+                insertDB(pkg, datetime);
+            }
+        }.run();
+    }
+
+    private void sort(ArrayList<StatisticsItem> data){
+        if(data == null || data.size() < 1) return;
+
+        int n = data.size();
+        for(int i=0;i<n-1;i++)
+            for(int j=i+1;j<n;j++){
+                if(data.get(i).count<data.get(j).count){
+                    StatisticsItem item = data.get(i);
+                    data.get(i).pkg = data.get(j).pkg;
+                    data.get(i).count = data.get(j).count;
+
+                    data.get(j).pkg = item.pkg;
+                    data.get(j).count = item.count;
+                }
+            }
+    }
+
+    public void insertDB(String pkg, String datetime) {
         mHelper.insert(pkg, datetime);
     }
 
-    public String getMostPopularApp(int dur) {
+    public String getMostPopularApp(){
+        String pkg = "";
+
+        if(mReady && mStatisticsList.size() > 0){
+            pkg = mStatisticsList.get(0).pkg;
+        }
+
+        Log.i(TAG, "getMostPopularApp(): " + pkg);
+        return pkg;
+    }
+
+    public String getMostPopularAppFromDB(int dur) {
         String pkg = "";
 
         SQLiteDatabase db = mHelper.getWritableDatabase();
@@ -104,7 +169,7 @@ public class DBManager {
 
         db.close();
 
-        Log.i(TAG, "getMostPopularApp(): " + pkg);
+        Log.i(TAG, "getMostPopularAppFromDB(): " + pkg);
         return pkg;
     }
 

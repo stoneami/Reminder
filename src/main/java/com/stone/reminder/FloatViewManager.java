@@ -199,7 +199,7 @@ public class FloatViewManager extends Service {
 
         String pkg = "";
         if(PreferenceUtil.getInstance(this).displayOftenOpenIcon()) {
-            pkg = DBManager.getInstance(this).getMostPopularApp(24);
+            pkg = DBManager.getInstance(this).getMostPopularApp();
         }
 
         if(!pkg.isEmpty()){

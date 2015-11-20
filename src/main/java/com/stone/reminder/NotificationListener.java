@@ -17,7 +17,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.IBinder;
@@ -53,9 +52,7 @@ public class NotificationListener extends NotificationListenerService {
     public static final String MSG_LOAD_NOTIFICATIONS = "msg.j.load.notifications";
     public static final String MSG_RELOAD_NOTIFICATIONS = "msg.j.reload.notifications";
     public static final String MSG_ALWAYS_SHOW_FLOAT_VIEW = "msg.j.always.show.float.view";
-
     public static final String MSG_OPEN_CURRENT_NOTIFICATION = "msg.j.open.current.notification";
-
     public static final String MSG_DISPLAY_OFTEN_OPEN_ICON = "msg.j.display.often.open.icon";
 
     public static final String PACKAGE = "pkg";
@@ -67,11 +64,11 @@ public class NotificationListener extends NotificationListenerService {
 
     private Handler mHandler = new Handler();
 
-    private ArrayList<NotificationListenerItem> mPkgList = new ArrayList<NotificationListenerItem>(
+    private ArrayList<NotificationListenerItem> mPkgList = new ArrayList<>(
             5);
-    private ArrayList<String> mAutoOpenPackage = new ArrayList<String>();
+    private ArrayList<String> mAutoOpenPackage = new ArrayList<>();
 
-    private final ArrayList<String> mIgnoredPackage = new ArrayList<String>();
+    private final ArrayList<String> mIgnoredPackage = new ArrayList<>();
 
     private void init() {
         String[] list = getResources().getStringArray(R.array.ignored_packages);
@@ -87,7 +84,7 @@ public class NotificationListener extends NotificationListenerService {
         mActivityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         mPackageManager = getPackageManager();
 
-        DBManager.getInstance(this).loadData();
+        DBManager.getInstance(this).asyncLoadData();
     }
 
     private void asyncLoadActiveNotification() {
@@ -172,11 +169,11 @@ public class NotificationListener extends NotificationListenerService {
 
                         String datetime = Util.getInstance(NotificationListener.this).getCurrentDatetime();
                         Log.i(TAG,"package: " + mCurPkg + " datetime: " + datetime);
-                        DBManager.getInstance(NotificationListener.this).insert(mCurPkg, datetime);
+                        DBManager.getInstance(NotificationListener.this).asyncInsert(mCurPkg, datetime);
                     }
                 }else{
                     if(PreferenceUtil.getInstance(NotificationListener.this).smartOpenApp()) {
-                        String pkg = DBManager.getInstance(NotificationListener.this).getMostPopularApp(24);
+                        String pkg = DBManager.getInstance(NotificationListener.this).getMostPopularApp();
                         if (!pkg.isEmpty()) {
                             Util.getInstance(NotificationListener.this).launchNotificationPkg(pkg, null);
                         }

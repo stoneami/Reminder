@@ -61,7 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(AppRecord.PACKAGE_NAME, pkg);
             values.put(AppRecord.OPEN_TIME, datetime);
             long row = db.insert(AppRecord.TABLE_NAME, null, values);
-            Log.i(TAG, "insert(); row=" + row);
+            Log.i(TAG, "asyncInsert(); row=" + row);
 
             db.setTransactionSuccessful();
         }finally {
