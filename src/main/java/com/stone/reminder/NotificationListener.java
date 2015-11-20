@@ -86,6 +86,8 @@ public class NotificationListener extends NotificationListenerService {
 
         mActivityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         mPackageManager = getPackageManager();
+
+        DBManager.getInstance(this).loadData();
     }
 
     private void asyncLoadActiveNotification() {
