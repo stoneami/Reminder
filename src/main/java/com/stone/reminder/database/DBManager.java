@@ -1,4 +1,4 @@
-package com.stone.database;
+package com.stone.reminder.database;
 
 /**
  * Created by stoneami on 2015/11/6.
@@ -12,11 +12,8 @@ import android.util.Log;
 
 import com.stone.reminder.NotificationListener;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

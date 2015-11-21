@@ -1,4 +1,4 @@
-package com.stone.database;
+package com.stone.reminder.database;
 
 import android.content.ContentValues;
 import android.content.Context;

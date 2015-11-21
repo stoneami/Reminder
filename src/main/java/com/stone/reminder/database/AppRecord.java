@@ -1,4 +1,4 @@
-package com.stone.database;
+package com.stone.reminder.database;
 
 /**
  * Created by stoneami on 2015/11/14.

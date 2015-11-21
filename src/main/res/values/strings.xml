@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Notification Reminder</string>
     <string name="label">Notification Listener</string>
+    <string name="accessibility_service_description"></string>
     <string name="instruction">\'Notification Reminder\' will show APP notifications in a float window.\nFunctions：\n（1）single click: open notification\n（2）fling up and down: switch app\n（3）fling to left：clear current notifications\n(4)fling to right: clear all notifications</string>
 
     <string name="label_permmit_float">Allow float view</string>

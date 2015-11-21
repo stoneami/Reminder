@@ -29,9 +29,9 @@ import android.content.pm.ResolveInfo;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 
-import com.stone.database.DBManager;
-import com.stone.utils.PreferenceUtil;
-import com.stone.utils.Util;
+import com.stone.reminder.database.DBManager;
+import com.stone.reminder.utils.PreferenceUtil;
+import com.stone.reminder.utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;

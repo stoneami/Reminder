@@ -19,9 +19,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 
@@ -36,9 +34,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.stone.database.DBManager;
-import com.stone.utils.PreferenceUtil;
-import com.stone.utils.Util;
+import com.stone.reminder.database.DBManager;
+import com.stone.reminder.utils.PreferenceUtil;
 
 public class FloatViewManager extends Service {
     private static final String TAG = "FloatViewManager";

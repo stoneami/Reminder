@@ -1,6 +1,5 @@
 package com.stone.reminder;
 
-import android.app.ActivityManager;
 import android.content.Intent;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -11,13 +10,7 @@ import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.content.pm.PackageManager;
-import android.content.pm.ActivityInfo;
-
-import com.stone.utils.Util;
+import com.stone.reminder.utils.Util;
 
 /**
  * Created by 80048914 on 2015/2/27.

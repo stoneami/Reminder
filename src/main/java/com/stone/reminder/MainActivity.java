@@ -2,10 +2,7 @@ package com.stone.reminder;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
-
-import com.stone.utils.Util;
 
 public class MainActivity extends Activity {
     private MainPreferencFragment mPreferenceFragment;
@@ -20,5 +17,8 @@ public class MainActivity extends Activity {
 
         mPreferenceFragment = new MainPreferencFragment();
         getFragmentManager().beginTransaction().replace(android.R.id.content, mPreferenceFragment).commit();
+
+        //Intent killIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+        //startActivity(killIntent);
     }
 }
