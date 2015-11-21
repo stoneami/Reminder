@@ -14,7 +14,11 @@ import com.stone.reminder.NotificationListener;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DBManager {
     private static String TAG = "DBManager";
@@ -25,6 +29,8 @@ public class DBManager {
     private static DBManager mInstance = null;
 
     private static Context mContext;
+
+    private ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
     public static DBManager getInstance(Context context) {
         if (mInstance == null) {
@@ -41,40 +47,47 @@ public class DBManager {
 
     private ArrayList<StatisticsItem> mStatisticsList = new ArrayList<>(10);
 
+    private Runnable mLoadingRunnable = new Runnable() {
+        @Override
+        public void run() {
+            SQLiteDatabase db = mHelper.getWritableDatabase();
+            /**
+             * select datetime('now') is 8 hour earlier than Beijing Locale, so we increase 8 hours manually
+             */
+            String selection = "select package, count(package) as total from app_open_record where open_time between datetime(?,?,?) and datetime(?,?) group by package order by total desc";
+            String[] selectionArgs = new String[]{"now", "+8 hour", "-24 hour", "now", "+8 hour"};
+            Cursor cursor = db.rawQuery(selection, selectionArgs);
+            while (cursor.moveToNext()) {
+                String pkg = cursor.getString(cursor.getColumnIndex(AppRecord.PACKAGE_NAME));
+                int count = cursor.getInt(cursor.getColumnIndex("total"));
+                Log.i(TAG, "asyncLoadData(): pkg=" + pkg + ", count=" + count);
+                mStatisticsList.add(new StatisticsItem(pkg, count));
+            }
+
+            //ready to show often-open app
+            if(cursor.getCount() > 0){
+                mContext.sendBroadcast(new Intent(NotificationListener.MSG_DISPLAY_OFTEN_OPEN_ICON));
+            }
+
+            cursor.close();
+
+            mReady = true;
+
+            Log.i(TAG,"DBManager initialize completely !");
+        }
+    };
+
     private boolean mReady = false;
     public void asyncLoadData(){
-        new Thread(){
-            @Override
-            public void run() {
-                super.run();
+        if(mReady) {
+            Log.i(TAG,"DBManager has been initialized, no need to do again !");
+            return;
+        }
 
-                SQLiteDatabase db = mHelper.getWritableDatabase();
-                /**
-                 * select datetime('now') is 8 hour earlier than Beijing Locale, so we increase 8 hours manually
-                 */
-                String selection = "select package, count(package) as total from app_open_record where open_time between datetime(?,?,?) and datetime(?,?) group by package order by total desc";
-                String[] selectionArgs = new String[]{"now", "+8 hour", "-24 hour", "now", "+8 hour"};
-                Cursor cursor = db.rawQuery(selection, selectionArgs);
-                while (cursor.moveToNext()) {
-                    String pkg = cursor.getString(cursor.getColumnIndex(AppRecord.PACKAGE_NAME));
-                    int count = cursor.getInt(cursor.getColumnIndex("total"));
-                    Log.i(TAG, "asyncLoadData(): pkg=" + pkg + ", count=" + count);
-                    mStatisticsList.add(new StatisticsItem(pkg, count));
-                }
-
-                //ready to show often-open app
-                if(cursor.getCount() > 0){
-                    mContext.sendBroadcast(new Intent(NotificationListener.MSG_DISPLAY_OFTEN_OPEN_ICON));
-                }
-
-                cursor.close();
-
-                mReady = true;
-            }
-        }.run();
+        mExecutor.execute(mLoadingRunnable);
     }
 
-    private class StatisticsItem{
+    private static class StatisticsItem implements Comparable<StatisticsItem>{
         private String pkg;
         private int count;
 
@@ -82,52 +95,61 @@ public class DBManager {
             this.pkg = pkg;
             this.count = count;
         }
+
+        @Override
+        public int compareTo(StatisticsItem another) {
+            if(this.count > another.count){
+                return -1;
+            }else{
+                return 1;
+            }
+        }
+    }
+
+    private InsertRunnable mInsertRunnable = new InsertRunnable();
+    private class InsertRunnable implements Runnable {
+        private String pkg;
+        private String datetime;
+
+        public InsertRunnable updateData(String pkg, String datetime){
+            this.pkg = pkg;
+            this.datetime = datetime;
+
+            return this;
+        }
+
+        @Override
+        public void run() {
+            int n = mStatisticsList.size();
+            int i = 0;
+            for(;i<n;i++){
+                if(mStatisticsList.get(i).pkg.equals(pkg)){
+                    ++ mStatisticsList.get(i).count;
+                    break;
+                }
+            }
+
+            if(n == 0 || i == n){
+                mStatisticsList.add(new StatisticsItem(pkg,1));
+            }
+
+            Collections.sort(mStatisticsList);
+
+            if(DEBUG){
+                int MAX = mStatisticsList.size();
+                Log.i(TAG,"******after sort()******");
+                for(int t=0;t<MAX;t++){
+                    Log.i(TAG,"pkg=" + mStatisticsList.get(t).pkg + " count=" + mStatisticsList.get(t).count);
+                }
+                Log.i(TAG,"************************");
+            }
+
+            insertDB(pkg, datetime);
+        }
     }
 
     public void asyncInsert(final String pkg, final String datetime){
-        new Thread(){
-            @Override
-            public void run() {
-                super.run();
-                int n = mStatisticsList.size();
-                int i = 0;
-                for(;i<n;i++){
-                    if(mStatisticsList.get(i).pkg.equals(pkg)){
-                        ++ mStatisticsList.get(i).count;
-                        break;
-                    }
-                }
-
-                if(n == 0 || i == n){
-                    mStatisticsList.add(new StatisticsItem(pkg,1));
-                }
-
-                sort(mStatisticsList);
-
-                insertDB(pkg, datetime);
-            }
-        }.run();
-    }
-
-    private void sort(ArrayList<StatisticsItem> data){
-        if(data == null || data.size() < 1) return;
-
-        int n = data.size();
-        for(int i=0;i<n-1;i++)
-            for(int j=i+1;j<n;j++){
-                if(data.get(i).count<data.get(j).count){
-                    StatisticsItem item = data.get(i);
-                    data.get(i).pkg = data.get(j).pkg;
-                    data.get(i).count = data.get(j).count;
-
-                    data.get(j).pkg = item.pkg;
-                    data.get(j).count = item.count;
-                }
-            }
-    }
-
-    public void insertDB(String pkg, String datetime) {
-        mHelper.insert(pkg, datetime);
+        mExecutor.execute(mInsertRunnable.updateData(pkg, datetime));
     }
 
     public String getMostPopularApp(){
@@ -141,7 +163,11 @@ public class DBManager {
         return pkg;
     }
 
-    public String getMostPopularAppFromDB(int dur) {
+    private void insertDB(String pkg, String datetime) {
+        mHelper.insert(pkg, datetime);
+    }
+
+    private String getMostPopularAppFromDB(int dur) {
         String pkg = "";
 
         SQLiteDatabase db = mHelper.getWritableDatabase();
@@ -171,9 +197,5 @@ public class DBManager {
 
         Log.i(TAG, "getMostPopularAppFromDB(): " + pkg);
         return pkg;
-    }
-
-    public void closeDB() {
-        mHelper.close();
     }
 }
