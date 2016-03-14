@@ -51,7 +51,7 @@ public class NotificationListener extends NotificationListenerService {
     public static final String MSG_REMOVE_CURRENT_NOTIFICATIONS = "msg.j.remove.current.notification";
     public static final String MSG_LOAD_NOTIFICATIONS = "msg.j.load.notifications";
     public static final String MSG_RELOAD_NOTIFICATIONS = "msg.j.reload.notifications";
-    public static final String MSG_ALWAYS_SHOW_FLOAT_VIEW = "msg.j.always.show.float.view";
+    public static final String MSG_SHOW_DEFAULT_FLOAT_VIEW = "msg.j.show.default.float.view";
     public static final String MSG_OPEN_CURRENT_NOTIFICATION = "msg.j.open.current.notification";
     public static final String MSG_DISPLAY_OFTEN_OPEN_ICON = "msg.j.display.often.open.icon";
 
@@ -104,6 +104,8 @@ public class NotificationListener extends NotificationListenerService {
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
             String action = intent.getAction();
+            if(DEBUG) Log.i(TAG, "onReceive(): " + action);
+
             if (MSG_REMOVE_ALL_NOTIFICATIONS.equals(action)) {
 
                 if (DEBUG) Log.i(TAG, "onReceive(): clear all notifications !");
@@ -152,7 +154,8 @@ public class NotificationListener extends NotificationListenerService {
                 }
             } else if (MSG_LOAD_NOTIFICATIONS.equals(action)) {
                 asyncLoadActiveNotification();
-            } else if (MSG_ALWAYS_SHOW_FLOAT_VIEW.equals(action) || MSG_DISPLAY_OFTEN_OPEN_ICON.equals(action)) {
+            } else if (MSG_SHOW_DEFAULT_FLOAT_VIEW.equals(action) || MSG_DISPLAY_OFTEN_OPEN_ICON.equals(action)) {
+                if(DEBUG) Log.i(TAG, action + " : " + mPkgList.size());
                 if (mPkgList.isEmpty()) {
                     if (DEBUG) Log.i(TAG, "notifyNotificationChanged(null)");
                     notifyNotificationChanged(null);
@@ -172,7 +175,7 @@ public class NotificationListener extends NotificationListenerService {
                         DBManager.getInstance(NotificationListener.this).asyncInsert(mCurPkg, datetime);
                     }
                 }else{
-                    if(PreferenceUtil.getInstance(NotificationListener.this).smartOpenApp()) {
+                    if(PreferenceUtil.getInstance(getApplicationContext()).smartOpenApp()) {
                         String pkg = DBManager.getInstance(NotificationListener.this).getMostPopularApp();
                         if (!pkg.isEmpty()) {
                             Util.getInstance(NotificationListener.this).launchNotificationPkg(pkg, null);
@@ -197,7 +200,7 @@ public class NotificationListener extends NotificationListenerService {
         filter.addAction(MSG_REQUEST_PRE_NOTIFICATION);
         filter.addAction(MSG_REMOVE_CURRENT_NOTIFICATIONS);
         filter.addAction(MSG_LOAD_NOTIFICATIONS);
-        filter.addAction(MSG_ALWAYS_SHOW_FLOAT_VIEW);
+        filter.addAction(MSG_SHOW_DEFAULT_FLOAT_VIEW);
         filter.addAction(MSG_RELOAD_NOTIFICATIONS);
         filter.addAction(MSG_OPEN_CURRENT_NOTIFICATION);
         filter.addAction(MSG_DISPLAY_OFTEN_OPEN_ICON);
@@ -289,9 +292,6 @@ public class NotificationListener extends NotificationListenerService {
         int len = sbns.length;
 
         if (len > 0) {
-            ArrayList<NotificationListenerItem> canClearList = new ArrayList<NotificationListenerItem>();
-            ArrayList<NotificationListenerItem> noClearList = new ArrayList<NotificationListenerItem>();
-
             for (int i = 0; i < len; i++) {
                 StatusBarNotification sbn = sbns[i];
                 if (shouldAddPackage(sbn)) {
@@ -307,15 +307,19 @@ public class NotificationListener extends NotificationListenerService {
                         if (canCancel) {
                             mPkgList.add(new NotificationListenerItem(pkg, notice.flags, pendingIntent, notice.icon));
                         } else {
-                            ArrayList<NotificationListenerItem> temp = mPkgList;
-                            mPkgList = new ArrayList<>(temp.size() + 1);
-                            mPkgList.add(new NotificationListenerItem(pkg, notice.flags, pendingIntent, notice.icon));
-                            for (NotificationListenerItem t : temp) {
-                                mPkgList.add(t);
+                            if(PreferenceUtil.getInstance(this).recordOngoingMsg()) {
+                                ArrayList<NotificationListenerItem> temp = mPkgList;
+                                mPkgList = new ArrayList<>(temp.size() + 1);
+                                mPkgList.add(new NotificationListenerItem(pkg, notice.flags, pendingIntent, notice.icon));
+                                for (NotificationListenerItem t : temp) {
+                                    mPkgList.add(t);
+                                }
                             }
                         }
                     } else {
-                        mPkgList.add(new NotificationListenerItem(pkg, notice.flags, pendingIntent, notice.icon));
+                        if(PreferenceUtil.getInstance(this).recordOngoingMsg()) {
+                            mPkgList.add(new NotificationListenerItem(pkg, notice.flags, pendingIntent, notice.icon));
+                        }
                     }
 
                     if (DEBUG)
@@ -363,7 +367,7 @@ public class NotificationListener extends NotificationListenerService {
         boolean flagNoClear = (notice.flags & Notification.FLAG_NO_CLEAR) != 0;
         boolean flagOnGoing = (notice.flags & Notification.FLAG_ONGOING_EVENT) != 0;
         boolean canCancel = !flagNoClear && !flagOnGoing;
-        boolean recOngoingMsg = PreferenceUtil.getInstance(this).recordOngoingMsg();
+        boolean recOngoingMsg = PreferenceUtil.getInstance(getApplicationContext()).recordOngoingMsg();
 
         boolean newPkg = (getItemIndex(pkg) == -1);
         boolean permittedPkg = !mIgnoredPackage.contains(pkg);
@@ -550,9 +554,9 @@ public class NotificationListener extends NotificationListenerService {
     }
 
     private boolean shouldAutoOpenMsg(StatusBarNotification sbn) {
-        boolean openEverywhere = PreferenceUtil.getInstance(this).openMsgEverywhere();
-        boolean openAtHOME = PreferenceUtil.getInstance(this).openMsgOnlyHOME();
-        boolean permit = PreferenceUtil.getInstance(this).permitFloatView();
+        boolean openEverywhere = PreferenceUtil.getInstance(getApplicationContext()).openMsgEverywhere();
+        boolean openAtHOME = PreferenceUtil.getInstance(getApplicationContext()).openMsgOnlyHOME();
+        boolean permit = PreferenceUtil.getInstance(getApplicationContext()).permitFloatView();
 
         boolean hasPendingIntent = (sbn.getNotification().contentIntent != null);
 

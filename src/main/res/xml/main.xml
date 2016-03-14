@@ -8,8 +8,8 @@
 
     <CheckBoxPreference
         android:key="@string/key_float_view"
-        android:title="@string/label_permmit_float"
-        android:summary="@string/label_permmit_float_summary"
+        android:title="@string/label_permit_float"
+        android:summary="@string/label_permit_float_summary"
         android:defaultValue="@bool/default_open_float_view"/>
 
     <CheckBoxPreference

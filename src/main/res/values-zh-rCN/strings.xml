@@ -9,8 +9,8 @@
     <string name="label_enable_listener">激活通知监听服务</string>
     <string name="label_enable_listener_summary">激活服务后才能正常使用所有功能</string>
 
-    <string name="label_permmit_float">允许悬浮窗</string>
-    <string name="label_permmit_float_summary">非锁屏状态界面上将显示悬浮窗，双击它即可查看对应的通知消息</string>
+    <string name="label_permit_float">允许悬浮窗</string>
+    <string name="label_permit_float_summary">非锁屏状态界面上将显示悬浮窗，双击它即可查看对应的通知消息</string>
 
     <string name="label_auto_open_msg">仅在桌面自动查看消息</string>
     <string name="label_auto_open_msg_summary"></string>

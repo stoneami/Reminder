@@ -25,12 +25,16 @@ public class PreferenceUtil {
 
     public boolean permitFloatView(){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
-        return sp.getBoolean(MainPreferencFragment.KEY_FLOAT_VIEW, false);
+        boolean ret = sp.getBoolean(MainPreferencFragment.KEY_FLOAT_VIEW, true);
+        android.util.Log.i("PreferenceUtil","permitFloatView(): " + ret);
+        return ret;
     }
 
     public boolean showDefaultFloatView(){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
-        return sp.getBoolean(MainPreferencFragment.KEY_SHOW_DEFAULT_FLOAT_VIEW, true);
+        boolean ret = sp.getBoolean(MainPreferencFragment.KEY_SHOW_DEFAULT_FLOAT_VIEW, true);
+        android.util.Log.i("PreferenceUtil","showDefaultFloatView(): " + ret);
+        return ret;
     }
 
     public boolean openMsgOnlyHOME(){

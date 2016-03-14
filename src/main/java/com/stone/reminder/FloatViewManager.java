@@ -83,8 +83,14 @@ public class FloatViewManager extends Service {
         mShow = false;
         createFloatView();
 
-        if(PreferenceUtil.getInstance(FloatViewManager.this).permitFloatView()) {
-            showDefaultFloatView();
+        //there is no notification, show default float view if needed.
+        if(mNotificationPkg == null) {
+            boolean permitFloatView = PreferenceUtil.getInstance(this).permitFloatView();
+            boolean showDefaultFloatView = PreferenceUtil.getInstance(this).showDefaultFloatView();
+            if(permitFloatView && showDefaultFloatView) {
+                android.util.Log.i(TAG, "onCreate() -> show default float view.");
+                showDefaultFloatView();
+            }
         }
     }
 
@@ -195,7 +201,7 @@ public class FloatViewManager extends Service {
         ImageView imageView = (ImageView)mFloatLayout.findViewById(R.id.icon);
 
         String pkg = "";
-        if(PreferenceUtil.getInstance(this).displayOftenOpenIcon()) {
+        if(PreferenceUtil.getInstance(getApplicationContext()).displayOftenOpenIcon()) {
             pkg = DBManager.getInstance(this).getMostPopularApp();
         }
 
@@ -416,22 +422,31 @@ public class FloatViewManager extends Service {
                mIcon = intent.getIntExtra(NotificationListener.ICON, -1);
 
                if (mNotificationPkg.isEmpty()) {
-                   if(PreferenceUtil.getInstance(FloatViewManager.this).showDefaultFloatView()) {
+                   boolean permitFloat = PreferenceUtil.getInstance(getApplicationContext()).permitFloatView();
+                   boolean showDefaultFloatView = PreferenceUtil.getInstance(getApplicationContext()).showDefaultFloatView();
+                   if(permitFloat && showDefaultFloatView) {
                        if(DEBUG) {
                            Log.i(TAG, "mNotificationChangedReceiver.onReceive(): showDefaultFloatView()");
                        }
                        showDefaultFloatView();
                    }else{
                        if(DEBUG) {
-                           Log.i(TAG, "mNotificationChangedReceiver.onReceive(): hideFloatView()");
+                           Log.i(TAG, "1 mNotificationChangedReceiver.onReceive(): hideFloatView()");
                        }
                        hideFloatView();
                    }
                } else {
-                   if(DEBUG) {
-                       Log.i(TAG, "mNotificationChangedReceiver.onReceive(): showFloatView()");
+                   if(PreferenceUtil.getInstance(getApplicationContext()).permitFloatView()) {
+                       if (DEBUG) {
+                           Log.i(TAG, "mNotificationChangedReceiver.onReceive(): showFloatView()");
+                       }
+                       showFloatView();
+                   }else{
+                       if (DEBUG) {
+                           Log.i(TAG, "2 mNotificationChangedReceiver.onReceive(): hideFloatView()");
+                       }
+                       hideFloatView();
                    }
-                   showFloatView();
                }
            }
         }

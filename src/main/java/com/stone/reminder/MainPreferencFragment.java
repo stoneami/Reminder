@@ -11,6 +11,7 @@ import android.util.Log;
  * Created by 80048914 on 2015/4/17.
  */
 public class MainPreferencFragment extends PreferenceFragment  implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener{
+    public final static String TAG = "MainPreferencFragment";
     public static String KEY_ACTIVE_LISTENER;
     public static String KEY_FLOAT_VIEW;
     public static String KEY_SHOW_DEFAULT_FLOAT_VIEW;
@@ -87,21 +88,22 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        Log.i("jerry","onPreferenceChange()");
+        Log.i(TAG,"onPreferenceChange() -> " + preference.getKey());
+
         if(KEY_FLOAT_VIEW.equals(preference.getKey())){
             Intent intent = new Intent(getActivity(), FloatViewManager.class);
+            Log.i(TAG,"KEY_FLOAT_VIEW -> " + (Boolean)newValue);
             if((Boolean)newValue){
-                Log.i("jerry","KEY_FLOAT_VIEW:true");
                 mPreferenceAlwaysShowFloatView.setEnabled(true);
                 getActivity().startService(intent);
                 getActivity().sendBroadcast(new Intent(NotificationListener.MSG_LOAD_NOTIFICATIONS));
             }else {
-                Log.i("jerry","KEY_FLOAT_VIEW:false");
                 mPreferenceAlwaysShowFloatView.setEnabled(false);
                 getActivity().stopService(intent);
             }
         }else if(KEY_SHOW_DEFAULT_FLOAT_VIEW.equals(preference.getKey())){
-            Intent intent = new Intent(NotificationListener.MSG_ALWAYS_SHOW_FLOAT_VIEW);
+            Log.i(TAG,"KEY_SHOW_DEFAULT_FLOAT_VIEW -> " + (Boolean)newValue);
+            Intent intent = new Intent(NotificationListener.MSG_SHOW_DEFAULT_FLOAT_VIEW);
             getActivity().sendBroadcast(intent);
         }else if(KEY_RECORD_ONGOING_MSG.equals(preference.getKey())){
             Intent intent = new Intent(NotificationListener.MSG_RELOAD_NOTIFICATIONS);
@@ -111,9 +113,9 @@ public class MainPreferencFragment extends PreferenceFragment  implements Prefer
             getActivity().sendBroadcast(intent);
         }else if(KEY_SMART_OPEN_APP.equals(preference.getKey())){
             if((Boolean)newValue){
-                mPreferenceDisplayOftenOpenIcon.setEnabled(true);
+                //mPreferenceDisplayOftenOpenIcon.setEnabled(true);
             }else {
-                mPreferenceDisplayOftenOpenIcon.setEnabled(false);
+                //mPreferenceDisplayOftenOpenIcon.setEnabled(false);
             }
         }
 
